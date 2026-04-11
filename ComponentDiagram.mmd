@@ -1,0 +1,36 @@
+flowchart TB
+    A[JavaFX GUI]
+    B[Spring Boot REST API\n<small>Port 8083</small>]
+    C[(PostgreSQL\n<small>Port 5432</small>)]
+    D[Current Percentage Service\n<small>Port 8080</small>]
+    E[Usage Service\n<small>Port 8084</small>]
+    F[(RabbitMQ\n<small>Port ?</small>)]
+    G[Energy Producer\n<small>Port 8081</small>]
+    H[Energy User\n<small>Port 8082</small>]
+    I[Weather API\n<small>open-meteo</small>]
+    J[Time of Day]
+
+
+%% Frontend
+    A --- |↓ GET /energy/current| B
+    A --- |↓ GET /energy/historical?start=...&end=...| B
+
+%% API to DB
+    B --- |↓ read tables| C
+
+%% DB to services
+    C --- |↑ update percentage table| D
+    C --- |↑ update usage table| E
+
+%% Services to / from RabbitMQ
+    D ---|↑ update message| F
+    E ---|↑ producer/user message| F
+    E ---|↓ update message| F
+
+%% to Producer/User to RabbitMQ
+    F --- |↑ producer message| G
+    F --- |↑ user message| H
+
+%% External data sources
+    G --- |↓ use| I
+    H -.- |↓ use| J
