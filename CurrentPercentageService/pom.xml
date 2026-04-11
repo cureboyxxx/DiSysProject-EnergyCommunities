@@ -11,8 +11,8 @@
 	<groupId>at.uastw</groupId>
 	<artifactId>CurrentPercentageService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
+	<name>CurrentPercentageService</name>
+	<description>REST API for current percentage values</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -30,14 +30,22 @@
 		<java.version>21</java.version>
 	</properties>
 	<dependencies>
+		<!-- Web API -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webmvc</artifactId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<!-- Validation (Bean Validation / Jakarta Validation) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+		<!-- Testing -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
