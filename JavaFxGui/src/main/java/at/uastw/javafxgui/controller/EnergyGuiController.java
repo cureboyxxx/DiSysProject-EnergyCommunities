@@ -1,130 +1,120 @@
 package at.uastw.javafxgui.controller;
 
-import at.uastw.javafxgui.dto.CurrentEnergyResponse;
-import at.uastw.javafxgui.dto.HistoricalEnergyResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+import at.uastw.javafxgui.EnergyGuiApplication;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.util.Duration;
 
 public class EnergyGuiController {
 
-    // --- CURRENT ENERGY ---
-    @FXML private Label lb_status; // existing label from your old GUI
+    @FXML
+    private Button btn_refresh;
+    @FXML
+    private Button btn_showData;
 
-    // --- HISTORICAL UI ---
-    @FXML private ComboBox<String> cb_start;
-    @FXML private ComboBox<String> cb_end;
+    @FXML
+    private Circle circle_connectionInfo;
 
-    @FXML private Label lb_produced;
-    @FXML private Label lb_used;
-    @FXML private Label lb_grid_used;
+    @FXML
+    private Label lb_communityPoolValue;
+    @FXML
+    private Label lb_gridPortionValue;
 
-    // --- INIT ---
+    @FXML
+    private DatePicker datePicker_Start;
+    @FXML
+    private DatePicker datePicker_End;
+    @FXML
+    private Spinner<Integer> spinner_TimeHourStart;
+    @FXML
+    private Spinner<Integer> spinner_TimeMinuteStart;
+    @FXML
+    private Spinner<Integer> spinner_TimeHourEnd;
+    @FXML
+    private Spinner<Integer> spinner_TimeMinuteEnd;
+    @FXML
+    private Label lb_communityProducedValue;
+    @FXML
+    private Label lb_communityUsedValue;
+    @FXML
+    private Label lb_gridUsedValue;
+
     @FXML
     public void initialize() {
+        spinner_TimeHourStart.setValueFactory(
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0)
+        );
+        spinner_TimeHourStart.setEditable(true);
+        spinner_TimeHourEnd.setValueFactory(
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0)
+        );
+        spinner_TimeHourEnd.setEditable(true);
 
-        // Only initialize if dropdowns exist (safe for mixed UI)
-        if (cb_start != null && cb_end != null) {
+        ObservableList<Integer> minuteSteps =
+                FXCollections.observableArrayList(0, 15, 30, 45);
+        spinner_TimeMinuteStart.setValueFactory(
+                new SpinnerValueFactory.ListSpinnerValueFactory<>(minuteSteps)
+        );
+        spinner_TimeMinuteEnd.setValueFactory(
+                new SpinnerValueFactory.ListSpinnerValueFactory<>(minuteSteps)
+        );
 
-            cb_start.getItems().addAll(
-                    "2025-01-10T10:00:00",
-                    "2025-01-10T11:00:00",
-                    "2025-01-10T12:00:00",
-                    "2025-01-10T13:00:00",
-                    "2025-01-10T14:00:00"
-            );
+        LocalDate nowDate = LocalDate.now();
+        datePicker_Start.setValue(nowDate);
+        datePicker_End.setValue(nowDate);
 
-            cb_end.getItems().addAll(cb_start.getItems());
+        LocalTime nowTime = LocalTime.now();
 
-            cb_start.setValue("2025-01-10T12:00:00");
-            cb_end.setValue("2025-01-10T14:00:00");
-        }
+        spinner_TimeHourStart.getValueFactory().setValue(nowTime.getHour());
+        spinner_TimeHourEnd.getValueFactory().setValue(nowTime.getHour());
+
+        int minute = (nowTime.getMinute() / 15) * 15;
+        spinner_TimeMinuteStart.getValueFactory().setValue(minute);
+        spinner_TimeMinuteEnd.getValueFactory().setValue(minute);
+
+        updateCircleConnectivity();
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(5), event -> {
+                    updateCircleConnectivity();
+                })
+        );
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
+
     }
 
-    // --- EXISTING CURRENT ENERGY BUTTON (DO NOT BREAK) ---
+    private void updateCircleConnectivity(){
+        if(EnergyGuiApplication.isOnline())
+            circle_connectionInfo.setFill(Color.GREEN);
+        else
+            circle_connectionInfo.setFill(Color.RED);
+    }
+
     @FXML
-    protected void onLoadCurrentEnergyClick() {
-        try {
-            URL url = new URL("http://localhost:8083/energy/current");
-
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream())
-            );
-
-            StringBuilder response = new StringBuilder();
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-
-            reader.close();
-
-            ObjectMapper mapper = new ObjectMapper();
-            CurrentEnergyResponse data =
-                    mapper.readValue(response.toString(), CurrentEnergyResponse.class);
-
-            // Keep your old UI behavior
-            lb_status.setText("Community: " +
-                    data.getCommunityDepleted() + "% | Grid: " +
-                    data.getGridPortion() + "%");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    protected void onBtnRefreshClick() {
+        lb_communityPoolValue.setText("test000.00% used");
+        lb_gridPortionValue.setText("test000.00%");
     }
-
-    // --- NEW HISTORICAL BUTTON ---
     @FXML
-    protected void onLoadHistoricalClick() {
-        try {
-            String start = cb_start.getValue();
-            String end = cb_end.getValue();
-
-            String urlString = "http://localhost:8083/energy/historical?start="
-                    + start + "&end=" + end;
-
-            URL url = new URL(urlString);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream())
-            );
-
-            StringBuilder response = new StringBuilder();
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-
-            reader.close();
-
-            ObjectMapper mapper = new ObjectMapper();
-
-            HistoricalEnergyResponse[] data =
-                    mapper.readValue(response.toString(), HistoricalEnergyResponse[].class);
-
-            if (data.length > 0) {
-                HistoricalEnergyResponse last = data[data.length - 1];
-
-                lb_produced.setText("Produced: " + last.getCommunityProduced());
-                lb_used.setText("Used: " + last.getCommunityUsed());
-                lb_grid_used.setText("Grid: " + last.getGridUsed());
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    protected void onBtnShowDataClick() {
+        lb_communityProducedValue.setText("test000.000 kWh");
+        lb_communityUsedValue.setText("test000.000 kWh");
+        lb_gridUsedValue.setText("test000.000 kWh");
     }
+
 }
