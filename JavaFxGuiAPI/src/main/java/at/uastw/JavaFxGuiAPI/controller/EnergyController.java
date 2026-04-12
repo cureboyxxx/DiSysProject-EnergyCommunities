@@ -20,6 +20,7 @@ public class EnergyController {
 
     @GetMapping("/energy/current")
     public CurrentEnergyResponse getCurrentEnergy() {
+        System.out.println("GET /energy/current called");
         return energyService.getCurrentEnergy();
     }
 
@@ -28,6 +29,7 @@ public class EnergyController {
             @RequestParam String start,
             @RequestParam String end
     ) {
+        System.out.println("GET /energy/historical called: start=" + start + ", end=" + end);
         return energyService.getHistoricalEnergy(start, end);
     }
-}/**/
+}
