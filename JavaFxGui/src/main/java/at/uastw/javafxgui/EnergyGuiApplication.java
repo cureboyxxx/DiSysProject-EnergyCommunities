@@ -31,7 +31,7 @@ public class EnergyGuiApplication extends Application {
 
     public static boolean isOnline(){
         try {
-            URL url = new URL("http://localhost:8083/energy/current");
+            URL url = new URL("http://localhost:8083/heartbeat");
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");

@@ -18,6 +18,7 @@ public class EnergyController {
         this.energyService = energyService;
     }
 
+
     @GetMapping("/energy/current")
     public CurrentEnergyResponse getCurrentEnergy() {
         System.out.println("GET /energy/current called");
