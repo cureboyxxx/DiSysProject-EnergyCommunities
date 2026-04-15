@@ -1,0 +1,26 @@
+services:
+  database:
+    image: postgres:alpine
+    ports:
+      - '5432:5432'
+    volumes:
+      - database-data:/var/lib/postgresql
+    environment:
+      - POSTGRES_USER=disysuser
+      - POSTGRES_PASSWORD=disyspw
+  
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - rabbitmq-lib:/var/lib/rabbitmq/
+      - rabbitmq-log:/var/log/rabbitmq
+
+volumes:
+  database-data:
+  rabbitmq-lib:
+    driver: local
+  rabbitmq-log:
+    driver: local
