@@ -23,6 +23,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
@@ -118,35 +121,72 @@ public class EnergyGuiController {
         updateCircleConnectivity();
 
         try {
-            URI uri = URI.create("http://localhost:8083/energy/current");
-            HttpURLConnection conn = (HttpURLConnection) uri.toURL().openConnection();
-            conn.setRequestMethod("GET");
+            String url = "http://localhost:8083/energy/current";
 
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream())
+            HttpRequest getRequest = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .GET()
+                    .build();
+
+            HttpClient client = HttpClient.newBuilder().build();
+
+            HttpResponse<String> response = client.send(
+                    getRequest,
+                    HttpResponse.BodyHandlers.ofString()
             );
 
-            StringBuilder response = new StringBuilder();
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-
-            reader.close();
 
             ObjectMapper mapper = new ObjectMapper();
-            CurrentEnergyResponse data =
-                    mapper.readValue(response.toString(), CurrentEnergyResponse.class);
+            CurrentEnergyResponse currentEnergyResponse = mapper.readValue(
+                    response.body(),
+                    CurrentEnergyResponse.class
+            );
 
-            lb_communityPoolValue.setText(String.format("%.2f%% used", data.getCommunityDepleted()));
-            lb_gridPortionValue.setText(String.format("%.2f%%", data.getGridPortion()));
+            lb_communityPoolValue.setText(
+                    String.format("%.2f%% used", currentEnergyResponse.getCommunityDepleted())
+            );
+
+            lb_gridPortionValue.setText(
+                    String.format("%.2f%%", currentEnergyResponse.getGridPortion())
+            );
+
 
         } catch (Exception e) {
             lb_communityPoolValue.setText("error");
             lb_gridPortionValue.setText("error");
-            e.printStackTrace();
+            System.err.println("Error occurred during GET: " +  e.getMessage());
         }
+
+//        try {
+//            URI uri = URI.create("http://localhost:8083/energy/current");
+//            HttpURLConnection conn = (HttpURLConnection) uri.toURL().openConnection();
+//            conn.setRequestMethod("GET");
+//
+//            BufferedReader reader = new BufferedReader(
+//                    new InputStreamReader(conn.getInputStream())
+//            );
+//
+//            StringBuilder response = new StringBuilder();
+//            String line;
+//
+//            while ((line = reader.readLine()) != null) {
+//                response.append(line);
+//            }
+//
+//            reader.close();
+//
+//            ObjectMapper mapper = new ObjectMapper();
+//            CurrentEnergyResponse data =
+//                    mapper.readValue(response.toString(), CurrentEnergyResponse.class);
+//
+//            lb_communityPoolValue.setText(String.format("%.2f%% used", data.getCommunityDepleted()));
+//            lb_gridPortionValue.setText(String.format("%.2f%%", data.getGridPortion()));
+//
+//        } catch (Exception e) {
+//            lb_communityPoolValue.setText("error");
+//            lb_gridPortionValue.setText("error");
+//            e.printStackTrace();
+//        }
     }
 
     @FXML
