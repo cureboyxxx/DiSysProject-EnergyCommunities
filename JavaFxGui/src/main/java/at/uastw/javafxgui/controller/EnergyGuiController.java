@@ -19,9 +19,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -209,46 +206,66 @@ public class EnergyGuiController {
             String urlString = "http://localhost:8083/energy/historical?start="
                     + start + "&end=" + end;
 
-            URI uri = URI.create(urlString);
-            HttpURLConnection conn = (HttpURLConnection) uri.toURL().openConnection();
-            conn.setRequestMethod("GET");
+            HttpRequest getRequest = HttpRequest.newBuilder()
+                    .uri(URI.create(urlString))
+                    .GET()
+                    .build();
 
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream())
+            HttpClient client = HttpClient.newBuilder().build();
+
+            HttpResponse<String> response = client.send(
+                    getRequest,
+                    HttpResponse.BodyHandlers.ofString()
             );
 
-            StringBuilder response = new StringBuilder();
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-
-            reader.close();
+//
+//            URI uri = URI.create(urlString);
+//            HttpURLConnection conn = (HttpURLConnection) uri.toURL().openConnection();
+//            conn.setRequestMethod("GET");
+//
+//            BufferedReader reader = new BufferedReader(
+//                    new InputStreamReader(conn.getInputStream())
+//            );
+//
+//            StringBuilder response = new StringBuilder();
+//            String line;
+//
+//            while ((line = reader.readLine()) != null) {
+//                response.append(line);
+//            }
+//
+//            reader.close();
 
             ObjectMapper mapper = new ObjectMapper();
-            List<HistoricalEnergyResponse> data = Arrays.asList(
-                    mapper.readValue(response.toString(), HistoricalEnergyResponse[].class)
+            List<HistoricalEnergyResponse> historicalEnergyResponse = Arrays.asList(
+                    mapper.readValue(response.body(), HistoricalEnergyResponse[].class)
             );
 
-            if (data.isEmpty()) {
+
+            if (historicalEnergyResponse.isEmpty()) {
                 lb_communityProducedValue.setText("no data");
                 lb_communityUsedValue.setText("no data");
                 lb_gridUsedValue.setText("no data");
                 return;
             }
 
-            HistoricalEnergyResponse last = data.get(data.size() - 1);
+            HistoricalEnergyResponse last = historicalEnergyResponse.get(historicalEnergyResponse.size() - 1);
 
-            lb_communityProducedValue.setText(String.format("%.3f kWh", last.getCommunityProduced()));
-            lb_communityUsedValue.setText(String.format("%.3f kWh", last.getCommunityUsed()));
-            lb_gridUsedValue.setText(String.format("%.3f kWh", last.getGridUsed()));
+            lb_communityProducedValue.setText(
+                    String.format("%.3f kWh", last.getCommunityProduced())
+            );
+            lb_communityUsedValue.setText(
+                    String.format("%.3f kWh", last.getCommunityUsed())
+            );
+            lb_gridUsedValue.setText(
+                    String.format("%.3f kWh", last.getGridUsed())
+            );
 
         } catch (Exception e) {
             lb_communityProducedValue.setText("error");
             lb_communityUsedValue.setText("error");
             lb_gridUsedValue.setText("error");
-            e.printStackTrace();
+            System.err.println("Error occurred during GET: " +  e.getMessage());
         }
     }
 
