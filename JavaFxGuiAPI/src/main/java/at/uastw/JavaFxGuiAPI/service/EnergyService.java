@@ -4,7 +4,6 @@ import at.uastw.JavaFxGuiAPI.dto.CurrentEnergyResponse;
 import at.uastw.JavaFxGuiAPI.dto.HistoricalEnergyResponse;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -12,7 +11,7 @@ public class EnergyService {
 
     public CurrentEnergyResponse getCurrentEnergy() {
         return new CurrentEnergyResponse(
-                "2025-01-10T14:00:00",
+                "2026-04-01T14:00:00",
                 86.0,
                 7.38
         );
@@ -22,7 +21,7 @@ public class EnergyService {
 
         // Mock data for 2026-04-01 for 24h in 15min intervals
         // Mock energy community with about 10 single family homes equipped with solar panels
-        List<HistoricalEnergyResponse> allData = List.of(
+        List<HistoricalEnergyResponse> allHistoricalEnergyResponses = List.of(
                 new HistoricalEnergyResponse("2026-04-01T00:00:00", 0.00, 0.22, 0.22),
                 new HistoricalEnergyResponse("2026-04-01T00:15:00", 0.00, 0.20, 0.20),
                 new HistoricalEnergyResponse("2026-04-01T00:30:00", 0.00, 0.18, 0.18),
@@ -121,10 +120,32 @@ public class EnergyService {
                 new HistoricalEnergyResponse("2026-04-01T23:45:00", 0.00, 0.14, 0.14)
         );
 
-        return allData.stream()
+        List<HistoricalEnergyResponse> filteredHistoricalEnergyResponses = allHistoricalEnergyResponses.stream()
                 .filter(e -> e.getHour().compareTo(start) >= 0)
                 .filter(e -> e.getHour().compareTo(end) <= 0)
-                .sorted(Comparator.comparing(HistoricalEnergyResponse::getHour))
                 .toList();
+
+        if (filteredHistoricalEnergyResponses.isEmpty()) {
+            return List.of();
+        }
+
+        double totalCommunityProduced = filteredHistoricalEnergyResponses.stream()
+                .mapToDouble(HistoricalEnergyResponse::getCommunityProduced)
+                .sum();
+
+        double totalCommunityUsed = filteredHistoricalEnergyResponses.stream()
+                .mapToDouble(HistoricalEnergyResponse::getCommunityUsed)
+                .sum();
+
+        double totalGridUsed = filteredHistoricalEnergyResponses.stream()
+                .mapToDouble(HistoricalEnergyResponse::getGridUsed)
+                .sum();
+
+        return List.of(new HistoricalEnergyResponse(
+                start,
+                totalCommunityProduced,
+                totalCommunityUsed,
+                totalGridUsed
+        ));
     }
 }
