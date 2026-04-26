@@ -132,7 +132,6 @@ public class EnergyGuiController {
                     HttpResponse.BodyHandlers.ofString()
             );
 
-
             ObjectMapper mapper = new ObjectMapper();
             CurrentEnergyResponse currentEnergyResponse = mapper.readValue(
                     response.body(),
@@ -147,43 +146,11 @@ public class EnergyGuiController {
                     String.format("%.2f%%", currentEnergyResponse.getGridPortion())
             );
 
-
         } catch (Exception e) {
             lb_communityPoolValue.setText("error");
             lb_gridPortionValue.setText("error");
             System.err.println("Error occurred during GET: " +  e.getMessage());
         }
-
-//        try {
-//            URI uri = URI.create("http://localhost:8083/energy/current");
-//            HttpURLConnection conn = (HttpURLConnection) uri.toURL().openConnection();
-//            conn.setRequestMethod("GET");
-//
-//            BufferedReader reader = new BufferedReader(
-//                    new InputStreamReader(conn.getInputStream())
-//            );
-//
-//            StringBuilder response = new StringBuilder();
-//            String line;
-//
-//            while ((line = reader.readLine()) != null) {
-//                response.append(line);
-//            }
-//
-//            reader.close();
-//
-//            ObjectMapper mapper = new ObjectMapper();
-//            CurrentEnergyResponse data =
-//                    mapper.readValue(response.toString(), CurrentEnergyResponse.class);
-//
-//            lb_communityPoolValue.setText(String.format("%.2f%% used", data.getCommunityDepleted()));
-//            lb_gridPortionValue.setText(String.format("%.2f%%", data.getGridPortion()));
-//
-//        } catch (Exception e) {
-//            lb_communityPoolValue.setText("error");
-//            lb_gridPortionValue.setText("error");
-//            e.printStackTrace();
-//        }
     }
 
     @FXML
@@ -218,29 +185,10 @@ public class EnergyGuiController {
                     HttpResponse.BodyHandlers.ofString()
             );
 
-//
-//            URI uri = URI.create(urlString);
-//            HttpURLConnection conn = (HttpURLConnection) uri.toURL().openConnection();
-//            conn.setRequestMethod("GET");
-//
-//            BufferedReader reader = new BufferedReader(
-//                    new InputStreamReader(conn.getInputStream())
-//            );
-//
-//            StringBuilder response = new StringBuilder();
-//            String line;
-//
-//            while ((line = reader.readLine()) != null) {
-//                response.append(line);
-//            }
-//
-//            reader.close();
-
             ObjectMapper mapper = new ObjectMapper();
             List<HistoricalEnergyResponse> historicalEnergyResponse = Arrays.asList(
                     mapper.readValue(response.body(), HistoricalEnergyResponse[].class)
             );
-
 
             if (historicalEnergyResponse.isEmpty()) {
                 lb_communityProducedValue.setText("no data");
