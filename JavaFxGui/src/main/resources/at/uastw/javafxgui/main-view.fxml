@@ -108,7 +108,8 @@
             <Spinner fx:id="spinner_TimeHourEnd" GridPane.columnIndex="2" GridPane.rowIndex="3" />
             <Spinner fx:id="spinner_TimeMinuteEnd" GridPane.columnIndex="3" GridPane.rowIndex="3" />
             <Button fx:id="btn_showData" mnemonicParsing="false" onAction="#onBtnShowDataClick" text="show data" GridPane.rowIndex="4" />
-            <Label fx:id="lb_communityProducedText" text="Community produced" GridPane.rowIndex="5" />
+             <Label fx:id="lb_errorMessage" textFill="red" visible="false" managed="false" GridPane.columnSpan="3" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+             <Label fx:id="lb_communityProducedText" text="Community produced" GridPane.rowIndex="5" />
             <Label fx:id="lb_communityProducedValue" text="000.000 kWh" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <Label fx:id="lb_communityUsedText" text="Community used" GridPane.rowIndex="6" />
             <Label fx:id="lb_communityUsedValue" text="000.000 kWh" GridPane.columnIndex="1" GridPane.rowIndex="6" />

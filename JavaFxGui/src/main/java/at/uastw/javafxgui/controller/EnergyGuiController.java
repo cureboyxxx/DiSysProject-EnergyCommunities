@@ -56,6 +56,8 @@ public class EnergyGuiController {
     @FXML
     private Spinner<Integer> spinner_TimeMinuteEnd;
     @FXML
+    private Label lb_errorMessage;
+    @FXML
     private Label lb_communityProducedValue;
     @FXML
     private Label lb_communityUsedValue;
@@ -158,14 +160,43 @@ public class EnergyGuiController {
         updateCircleConnectivity();
 
         try {
+            lb_errorMessage.setText("");
+            lb_errorMessage.setVisible(false);
+            lb_errorMessage.setManaged(false);
+
+            LocalDate startDate = datePicker_Start.getValue();
+            LocalDate endDate = datePicker_End.getValue();
+
+            LocalTime startTime = LocalTime.of(
+                    spinner_TimeHourStart.getValue(),
+                    spinner_TimeMinuteStart.getValue()
+            );
+
+            LocalTime endTime = LocalTime.of(
+                    spinner_TimeHourEnd.getValue(),
+                    spinner_TimeMinuteEnd.getValue()
+            );
+
+            if (startDate.atTime(startTime).isAfter(endDate.atTime(endTime))) {
+
+                lb_errorMessage.setText("Start date/time not before end date/time.");
+                lb_errorMessage.setVisible(true);
+                lb_errorMessage.setManaged(true);
+
+                lb_communityProducedValue.setText("no data");
+                lb_communityUsedValue.setText("no data");
+                lb_gridUsedValue.setText("no data");
+                return;
+            }
+
             String start = buildTimestamp(
-                    datePicker_Start.getValue(),
+                    startDate,
                     spinner_TimeHourStart.getValue(),
                     spinner_TimeMinuteStart.getValue()
             );
 
             String end = buildTimestamp(
-                    datePicker_End.getValue(),
+                    endDate,
                     spinner_TimeHourEnd.getValue(),
                     spinner_TimeMinuteEnd.getValue()
             );
@@ -210,6 +241,10 @@ public class EnergyGuiController {
             );
 
         } catch (Exception e) {
+            lb_errorMessage.setText("Failed to load historical energy data.");
+            lb_errorMessage.setVisible(true);
+            lb_errorMessage.setManaged(true);
+
             lb_communityProducedValue.setText("error");
             lb_communityUsedValue.setText("error");
             lb_gridUsedValue.setText("error");
