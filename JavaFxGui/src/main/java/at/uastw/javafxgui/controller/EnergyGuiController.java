@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
@@ -53,11 +51,7 @@ public class EnergyGuiController {
     @FXML
     private Spinner<Integer> spinner_TimeHourStart;
     @FXML
-    private Spinner<Integer> spinner_TimeMinuteStart;
-    @FXML
     private Spinner<Integer> spinner_TimeHourEnd;
-    @FXML
-    private Spinner<Integer> spinner_TimeMinuteEnd;
     @FXML
     private Label lb_errorMessage;
     @FXML
@@ -77,16 +71,6 @@ public class EnergyGuiController {
                 .IntegerSpinnerValueFactory(0, 23, 0));
         spinner_TimeHourEnd.setEditable(true);
 
-        ObservableList<Integer> minuteSteps =
-                FXCollections.observableArrayList(0, 15, 30, 45);
-
-        spinner_TimeMinuteStart.setValueFactory(
-                new SpinnerValueFactory.ListSpinnerValueFactory<>(minuteSteps)
-        );
-        spinner_TimeMinuteEnd.setValueFactory(
-                new SpinnerValueFactory.ListSpinnerValueFactory<>(minuteSteps)
-        );
-
         LocalDate nowDate = LocalDate.now();
         datePicker_Start.setValue(nowDate);
         datePicker_End.setValue(nowDate);
@@ -94,10 +78,6 @@ public class EnergyGuiController {
         LocalTime nowTime = LocalTime.now();
         spinner_TimeHourStart.getValueFactory().setValue(nowTime.getHour());
         spinner_TimeHourEnd.getValueFactory().setValue(nowTime.getHour());
-
-        int minute = (nowTime.getMinute() / 15) * 15;
-        spinner_TimeMinuteStart.getValueFactory().setValue(minute);
-        spinner_TimeMinuteEnd.getValueFactory().setValue(minute);
 
         updateCircleHeartbeat();
 
@@ -165,15 +145,9 @@ public class EnergyGuiController {
             LocalDate startDate = datePicker_Start.getValue();
             LocalDate endDate = datePicker_End.getValue();
 
-            LocalTime startTime = LocalTime.of(
-                    spinner_TimeHourStart.getValue(),
-                    spinner_TimeMinuteStart.getValue()
-            );
+            LocalTime startTime = LocalTime.of(spinner_TimeHourStart.getValue(), 0);
 
-            LocalTime endTime = LocalTime.of(
-                    spinner_TimeHourEnd.getValue(),
-                    spinner_TimeMinuteEnd.getValue()
-            );
+            LocalTime endTime = LocalTime.of(spinner_TimeHourEnd.getValue(), 0);
 
             if (startDate.atTime(startTime).isAfter(endDate.atTime(endTime))) {
 
@@ -189,14 +163,12 @@ public class EnergyGuiController {
 
             String start = buildTimestamp(
                     startDate,
-                    spinner_TimeHourStart.getValue(),
-                    spinner_TimeMinuteStart.getValue()
+                    spinner_TimeHourStart.getValue()
             );
 
             String end = buildTimestamp(
                     endDate,
-                    spinner_TimeHourEnd.getValue(),
-                    spinner_TimeMinuteEnd.getValue()
+                    spinner_TimeHourEnd.getValue()
             );
 
             String urlString = "http://localhost:8083/energy/historical?start="
@@ -250,7 +222,7 @@ public class EnergyGuiController {
         }
     }
 
-    private String buildTimestamp(LocalDate date, Integer hour, Integer minute) {
-        return String.format("%sT%02d:%02d:00", date, hour, minute);
+    private String buildTimestamp(LocalDate date, Integer hour) {
+        return String.format("%sT%02d:00:00", date, hour);
     }
 }

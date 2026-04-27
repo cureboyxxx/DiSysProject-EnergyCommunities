@@ -117,12 +117,10 @@
              <DatePicker fx:id="datePicker_Start" prefHeight="25.0" prefWidth="126.0" GridPane.columnIndex="1"
                          GridPane.rowIndex="2"/>
              <Spinner fx:id="spinner_TimeHourStart" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
-             <Spinner fx:id="spinner_TimeMinuteStart" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
              <Label fx:id="lb_End" text="End" GridPane.rowIndex="3"/>
              <DatePicker fx:id="datePicker_End" prefHeight="25.0" prefWidth="127.0" GridPane.columnIndex="1"
                          GridPane.rowIndex="3"/>
              <Spinner fx:id="spinner_TimeHourEnd" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
-             <Spinner fx:id="spinner_TimeMinuteEnd" GridPane.columnIndex="3" GridPane.rowIndex="3"/>
              <Button fx:id="btn_showData" mnemonicParsing="false" onAction="#onBtnShowDataClick" text="show data"
                      GridPane.rowIndex="4"/>
              <Label fx:id="lb_errorMessage" textFill="red" visible="false" managed="false" GridPane.columnSpan="3"
@@ -137,7 +135,6 @@
              <Label fx:id="lb_gridUsedValue" text="000.000 kWh" GridPane.columnIndex="1" GridPane.rowIndex="9"/>
              <Label text="Date" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
              <Label text="Hour" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-             <Label text="Minute" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
          </children>
       </GridPane>
    </children>
