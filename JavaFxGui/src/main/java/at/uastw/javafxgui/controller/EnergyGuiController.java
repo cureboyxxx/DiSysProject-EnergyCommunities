@@ -1,6 +1,5 @@
 package at.uastw.javafxgui.controller;
 
-import at.uastw.javafxgui.EnergyGuiApplication;
 import at.uastw.javafxgui.dto.CurrentEnergyResponse;
 import at.uastw.javafxgui.dto.HistoricalEnergyResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,6 +29,10 @@ import java.util.List;
 
 public class EnergyGuiController {
 
+    private final HeartbeatController heartbeatController = new HeartbeatController();
+    Timeline heartbeatTimeline = new Timeline(
+            new KeyFrame(Duration.seconds(5), event -> updateCircleHeartbeat())
+    );
     @FXML
     private Button btn_refresh;
     @FXML
@@ -66,14 +69,12 @@ public class EnergyGuiController {
 
     @FXML
     public void initialize() {
-        spinner_TimeHourStart.setValueFactory(
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0)
-        );
+        spinner_TimeHourStart.setValueFactory(new SpinnerValueFactory
+                .IntegerSpinnerValueFactory(0, 23, 0));
         spinner_TimeHourStart.setEditable(true);
 
-        spinner_TimeHourEnd.setValueFactory(
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0)
-        );
+        spinner_TimeHourEnd.setValueFactory(new SpinnerValueFactory
+                .IntegerSpinnerValueFactory(0, 23, 0));
         spinner_TimeHourEnd.setEditable(true);
 
         ObservableList<Integer> minuteSteps =
@@ -98,17 +99,14 @@ public class EnergyGuiController {
         spinner_TimeMinuteStart.getValueFactory().setValue(minute);
         spinner_TimeMinuteEnd.getValueFactory().setValue(minute);
 
-        updateCircleConnectivity();
+        updateCircleHeartbeat();
 
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(5), event -> updateCircleConnectivity())
-        );
-        timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.play();
+        heartbeatTimeline.setCycleCount(Animation.INDEFINITE);
+        heartbeatTimeline.play();
     }
 
-    private void updateCircleConnectivity() {
-        if (EnergyGuiApplication.isOnline()) {
+    private void updateCircleHeartbeat() {
+        if (heartbeatController.isOnline()) {
             circle_connectionInfo.setFill(Color.GREEN);
         } else {
             circle_connectionInfo.setFill(Color.RED);
@@ -117,7 +115,7 @@ public class EnergyGuiController {
 
     @FXML
     protected void onBtnRefreshClick() {
-        updateCircleConnectivity();
+        updateCircleHeartbeat();
 
         try {
             String url = "http://localhost:8083/energy/current";
@@ -157,7 +155,7 @@ public class EnergyGuiController {
 
     @FXML
     protected void onBtnShowDataClick() {
-        updateCircleConnectivity();
+        updateCircleHeartbeat();
 
         try {
             lb_errorMessage.setText("");
