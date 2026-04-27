@@ -149,7 +149,7 @@ public class EnergyGuiController {
 
             LocalTime endTime = LocalTime.of(spinner_TimeHourEnd.getValue(), 0);
 
-            if (startDate.atTime(startTime).isAfter(endDate.atTime(endTime))) {
+            if (!startDate.atTime(startTime).isBefore(endDate.atTime(endTime))) {
 
                 lb_errorMessage.setText("Start date/time not before end date/time.");
                 lb_errorMessage.setVisible(true);

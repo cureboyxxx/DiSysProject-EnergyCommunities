@@ -12,8 +12,8 @@ public class EnergyService {
     public CurrentEnergyResponse getCurrentEnergy() {
         return new CurrentEnergyResponse(
                 "2026-04-01T14:00:00",
-                86.0,
-                7.38
+                100.00,
+                5.63
         );
     }
 
