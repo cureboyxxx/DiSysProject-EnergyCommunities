@@ -129,7 +129,7 @@ public class EnergyGuiController {
         } catch (Exception e) {
             lb_communityPoolValue.setText("error");
             lb_gridPortionValue.setText("error");
-            System.err.println("Error occurred during GET: " +  e.getMessage());
+            System.err.println("GET request failed: " + e);
         }
     }
 
@@ -218,7 +218,7 @@ public class EnergyGuiController {
             lb_communityProducedValue.setText("error");
             lb_communityUsedValue.setText("error");
             lb_gridUsedValue.setText("error");
-            System.err.println("Error occurred during GET: " +  e.getMessage());
+            System.err.println("GET request failed: " + e);
         }
     }
 
