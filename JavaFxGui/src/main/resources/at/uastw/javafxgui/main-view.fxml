@@ -59,11 +59,9 @@
       </GridPane>
       <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
         <columnConstraints>
-          <ColumnConstraints hgrow="NEVER" minWidth="100.0" prefWidth="135.0" />
-          <ColumnConstraints hgrow="NEVER" minWidth="75.0" />
+            <ColumnConstraints hgrow="NEVER" minWidth="100.0" prefWidth="135.0" />
+            <ColumnConstraints hgrow="NEVER" minWidth="100.0" />
             <ColumnConstraints hgrow="ALWAYS" />
-            <ColumnConstraints />
-            <ColumnConstraints />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints vgrow="ALWAYS" />
@@ -89,8 +87,8 @@
              <Label fx:id="lb_gridPortionValue" text="000.00%" GridPane.columnIndex="1" GridPane.rowIndex="3" />
              <Separator GridPane.columnSpan="1" GridPane.rowIndex="4" />
              <Button fx:id="btn_refresh" mnemonicParsing="false" onAction="#onBtnRefreshClick" text="refresh" GridPane.rowIndex="5" />
-             <Separator GridPane.columnSpan="4" GridPane.rowIndex="7" />
-             <Separator GridPane.columnSpan="4" GridPane.rowIndex="8" />
+             <Separator GridPane.columnSpan="3" GridPane.rowIndex="7" />
+             <Separator GridPane.columnSpan="3" GridPane.rowIndex="8" />
          </children>
          <VBox.margin>
             <Insets />
@@ -99,9 +97,9 @@
       <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
         <columnConstraints>
             <ColumnConstraints hgrow="NEVER" minWidth="100.0" prefWidth="150.0" />
-            <ColumnConstraints hgrow="NEVER" minWidth="75.0" prefWidth="110.0" />
+            <ColumnConstraints hgrow="NEVER" minWidth="100.0" prefWidth="110.0" />
             <ColumnConstraints hgrow="NEVER" minWidth="55.0" prefWidth="60.0" />
-            <ColumnConstraints />
+            <ColumnConstraints hgrow="ALWAYS" />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints vgrow="ALWAYS" />
