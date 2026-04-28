@@ -23,9 +23,9 @@
    <children>
       <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="grid-h-lines" VBox.vgrow="NEVER">
         <columnConstraints>
-            <ColumnConstraints hgrow="NEVER" maxWidth="215.0" minWidth="10.0" prefWidth="205.0" />
-            <ColumnConstraints hgrow="NEVER" maxWidth="217.0" minWidth="10.0" prefWidth="129.0" />
-            <ColumnConstraints hgrow="NEVER" maxWidth="108.0" minWidth="10.0" prefWidth="22.0" />
+            <ColumnConstraints hgrow="NEVER" prefWidth="200.0" />
+            <ColumnConstraints hgrow="NEVER" prefWidth="125.0" />
+            <ColumnConstraints hgrow="NEVER" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints vgrow="NEVER" />
@@ -59,10 +59,11 @@
       </GridPane>
       <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
         <columnConstraints>
-          <ColumnConstraints hgrow="NEVER" maxWidth="161.0" minWidth="10.0" prefWidth="115.0" />
-          <ColumnConstraints hgrow="ALWAYS" maxWidth="238.0" minWidth="10.0" prefWidth="123.0" />
-            <ColumnConstraints />
+          <ColumnConstraints hgrow="NEVER" minWidth="100.0" prefWidth="125.0" />
+          <ColumnConstraints hgrow="NEVER" minWidth="75.0" />
             <ColumnConstraints hgrow="ALWAYS" />
+            <ColumnConstraints />
+            <ColumnConstraints />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints vgrow="ALWAYS" />
@@ -97,9 +98,9 @@
       </GridPane>
       <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
         <columnConstraints>
-            <ColumnConstraints hgrow="NEVER" maxWidth="181.0" minWidth="10.0" prefWidth="127.0" />
-            <ColumnConstraints hgrow="NEVER" maxWidth="210.0" minWidth="10.0" prefWidth="125.0" />
-            <ColumnConstraints hgrow="NEVER" maxWidth="210.0" minWidth="10.0" prefWidth="60.0" />
+            <ColumnConstraints hgrow="NEVER" minWidth="100.0" prefWidth="125.0" />
+            <ColumnConstraints hgrow="NEVER" minWidth="75.0" />
+            <ColumnConstraints hgrow="NEVER" minWidth="55.0" prefWidth="75.0" />
             <ColumnConstraints />
         </columnConstraints>
         <rowConstraints>
