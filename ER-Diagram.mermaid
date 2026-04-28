@@ -1,0 +1,14 @@
+erDiagram
+
+    EnergyUsage {
+        datetime hour PK
+        double community_produced
+        double community_used
+        double grid_used
+    }
+
+    CurrentPercentage {
+        datetime hour PK
+        double community_depleted
+        double grid_portion
+    }

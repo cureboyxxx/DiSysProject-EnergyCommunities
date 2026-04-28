@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/heartbeat")
-public class ConnectivityController {
+public class HeartbeatController {
 
     @GetMapping
-    public boolean getOnlineStatus(){
+    public boolean getHeartbeat(){
         return true;
     }
 }
