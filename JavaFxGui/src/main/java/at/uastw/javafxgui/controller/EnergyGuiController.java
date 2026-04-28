@@ -151,7 +151,7 @@ public class EnergyGuiController {
 
             if (!startDate.atTime(startTime).isBefore(endDate.atTime(endTime))) {
 
-                lb_errorMessage.setText("Start date/time not before end date/time.");
+                lb_errorMessage.setText("Start date/time not before end.");
                 lb_errorMessage.setVisible(true);
                 lb_errorMessage.setManaged(true);
 

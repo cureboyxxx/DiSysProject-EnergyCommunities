@@ -31,12 +31,12 @@
           <RowConstraints vgrow="NEVER" />
         </rowConstraints>
          <children>
-            <Label fx:id="lb_title" prefHeight="20.0" prefWidth="196.0" text="Energy Community Monitor">
+            <Label fx:id="lb_title" text="Energy Community Monitor">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Label fx:id="lb_connectionInfo" alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="124.0" text="Connection to service:" GridPane.columnIndex="1" />
+            <Label fx:id="lb_connectionInfo" alignment="CENTER_RIGHT" text="Connection to service:" GridPane.columnIndex="1" />
             <Circle fx:id="circle_connectionInfo" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="2">
                <fill>
                   <LinearGradient endX="1.0" endY="1.0">
@@ -59,7 +59,7 @@
       </GridPane>
       <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
         <columnConstraints>
-          <ColumnConstraints hgrow="NEVER" minWidth="100.0" prefWidth="125.0" />
+          <ColumnConstraints hgrow="NEVER" minWidth="100.0" prefWidth="135.0" />
           <ColumnConstraints hgrow="NEVER" minWidth="75.0" />
             <ColumnConstraints hgrow="ALWAYS" />
             <ColumnConstraints />
@@ -83,10 +83,10 @@
                  </font>
              </Label>
              <Label fx:id="lb_communityPoolText" text="Community Pool" GridPane.rowIndex="1" />
-             <Label fx:id="lb_communityPoolValue" prefHeight="17.0" prefWidth="117.0" text="000.00% used" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+             <Label fx:id="lb_communityPoolValue" text="000.00% used" GridPane.columnIndex="1" GridPane.rowIndex="1" />
              <Separator GridPane.columnSpan="1" GridPane.rowIndex="2" />
              <Label fx:id="lb_gridPortionText" text="Grid Portion" GridPane.rowIndex="3" />
-             <Label fx:id="lb_gridPortionValue" prefHeight="17.0" prefWidth="117.0" text="000.00%" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+             <Label fx:id="lb_gridPortionValue" text="000.00%" GridPane.columnIndex="1" GridPane.rowIndex="3" />
              <Separator GridPane.columnSpan="1" GridPane.rowIndex="4" />
              <Button fx:id="btn_refresh" mnemonicParsing="false" onAction="#onBtnRefreshClick" text="refresh" GridPane.rowIndex="5" />
              <Separator GridPane.columnSpan="4" GridPane.rowIndex="7" />
@@ -98,9 +98,9 @@
       </GridPane>
       <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
         <columnConstraints>
-            <ColumnConstraints hgrow="NEVER" minWidth="100.0" prefWidth="125.0" />
-            <ColumnConstraints hgrow="NEVER" minWidth="75.0" />
-            <ColumnConstraints hgrow="NEVER" minWidth="55.0" prefWidth="75.0" />
+            <ColumnConstraints hgrow="NEVER" minWidth="100.0" prefWidth="150.0" />
+            <ColumnConstraints hgrow="NEVER" minWidth="75.0" prefWidth="110.0" />
+            <ColumnConstraints hgrow="NEVER" minWidth="55.0" prefWidth="60.0" />
             <ColumnConstraints />
         </columnConstraints>
         <rowConstraints>
@@ -115,16 +115,16 @@
             <RowConstraints vgrow="ALWAYS" />
         </rowConstraints>
          <children>
-            <Label fx:id="lb_usage" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Historical Usage" GridPane.columnSpan="2">
+            <Label fx:id="lb_usage" text="Historical Usage" GridPane.columnSpan="2">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
              <Label fx:id="lb_Start" text="Start" GridPane.rowIndex="2" />
-             <DatePicker fx:id="datePicker_Start" prefHeight="25.0" prefWidth="126.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+             <DatePicker fx:id="datePicker_Start" GridPane.columnIndex="1" GridPane.rowIndex="2" />
              <Spinner fx:id="spinner_TimeHourStart" GridPane.columnIndex="2" GridPane.rowIndex="2" />
              <Label fx:id="lb_End" text="End" GridPane.rowIndex="3" />
-             <DatePicker fx:id="datePicker_End" prefHeight="25.0" prefWidth="127.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+             <DatePicker fx:id="datePicker_End" GridPane.columnIndex="1" GridPane.rowIndex="3" />
              <Spinner fx:id="spinner_TimeHourEnd" GridPane.columnIndex="2" GridPane.rowIndex="3" />
              <Button fx:id="btn_showData" mnemonicParsing="false" onAction="#onBtnShowDataClick" text="show data" GridPane.rowIndex="4" />
              <Label fx:id="lb_errorMessage" managed="false" textFill="red" visible="false" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4" />
