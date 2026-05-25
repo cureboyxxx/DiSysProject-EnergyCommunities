@@ -24,9 +24,8 @@ public class OpenMeteoWeatherService {
             throw new IllegalStateException("Open-Meteo response did not include current weather");
         }
 
-        // TODO changed to isDay == 0 because I need data while working at night
         return new WeatherCondition(
-                response.getCurrent().getIsDay() == 0,
+                response.getCurrent().getIsDay() == 1,
                 response.getCurrent().getCloudCover()
         );
     }

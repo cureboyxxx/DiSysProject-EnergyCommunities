@@ -1,6 +1,7 @@
 package at.uastw.EnergyProducer.service;
 
 import at.uastw.EnergyProducer.model.ProducedEnergyMessage;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
@@ -23,13 +24,15 @@ public class ProducedEnergyRabbitMqPublisher {
             rabbit.convertAndSend(
                     "produced_energy",
                     payload,
-                    rabbitMessage -> {
-                        rabbitMessage.getMessageProperties().setContentType(MessageProperties.CONTENT_TYPE_JSON);
-                        return rabbitMessage;
-                    }
+                    this::setJsonContentType
             );
         } catch (Exception exception) {
             throw new IllegalStateException("Could not publish produced energy message", exception);
         }
+    }
+
+    private Message setJsonContentType(Message rabbitMessage) {
+        rabbitMessage.getMessageProperties().setContentType(MessageProperties.CONTENT_TYPE_JSON);
+        return rabbitMessage;
     }
 }
