@@ -1,20 +1,19 @@
 package at.uastw.EnergyProducer.scheduler;
 
 import at.uastw.EnergyProducer.model.ProducedEnergyMessage;
-import at.uastw.EnergyProducer.service.EnergyGenerator;
-import at.uastw.EnergyProducer.service.MessagePublisher;
+import at.uastw.EnergyProducer.service.ProducedEnergyRabbitMqPublisher;
+import at.uastw.EnergyProducer.service.SolarEnergyGenerator;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.Random;
 
 @Component
 public class EnergyProducerScheduler {
-    private EnergyGenerator energyGenerator;
-    private MessagePublisher messagePublisher;
+    private final SolarEnergyGenerator energyGenerator;
+    private final ProducedEnergyRabbitMqPublisher messagePublisher;
 
-    public EnergyProducerScheduler(EnergyGenerator energyGenerator, MessagePublisher messagePublisher) {
+    public EnergyProducerScheduler(SolarEnergyGenerator energyGenerator, ProducedEnergyRabbitMqPublisher messagePublisher) {
         this.energyGenerator = energyGenerator;
         this.messagePublisher = messagePublisher;
     }

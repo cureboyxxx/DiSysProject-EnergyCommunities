@@ -1,8 +1,6 @@
-package at.uastw.EnergyProducer.service.impl;
+package at.uastw.EnergyProducer.service;
 
 import at.uastw.EnergyProducer.model.WeatherCondition;
-import at.uastw.EnergyProducer.service.EnergyGenerator;
-import at.uastw.EnergyProducer.service.WeatherService;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
@@ -19,15 +17,14 @@ import java.util.Random;
 // based on slightly different variables
 
 @Service
-public class SolarEnergyGenerator implements EnergyGenerator {
-    private final WeatherService weatherService;
+public class SolarEnergyGenerator {
+    private final OpenMeteoWeatherService weatherService;
     private final Random random = new Random();
 
-    public SolarEnergyGenerator(WeatherService weatherService) {
+    public SolarEnergyGenerator(OpenMeteoWeatherService weatherService) {
         this.weatherService = weatherService;
     }
 
-    @Override
     public double generateEnergyInKwh() {
         WeatherCondition weatherCondition = weatherService.getCurrentWeatherCondition();
 
@@ -36,7 +33,8 @@ public class SolarEnergyGenerator implements EnergyGenerator {
         }
 
         double maxEnergyCapacityInKwh = 1.0;
-        double cloudCoverPenalty = weatherCondition.getCloudCover() * 0.008;
+        double cloudCover = Math.max(0, Math.min(100, weatherCondition.getCloudCover()));
+        double cloudCoverPenalty = cloudCover * 0.008;
         double efficiency = 1.0 - cloudCoverPenalty;
         double fluctuation = 0.9 + (random.nextDouble() * 0.2);
 
