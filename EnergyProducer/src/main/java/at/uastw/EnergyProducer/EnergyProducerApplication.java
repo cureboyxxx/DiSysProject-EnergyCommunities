@@ -17,16 +17,6 @@ public class EnergyProducerApplication {
 	}
 
 	@Bean
-	public Queue echoInQueue() {
-		return new Queue("echo_in", true);
-	}
-
-	@Bean
-	public Queue echoOutQueue() {
-		return new Queue("echo_out", true);
-	}
-
-	@Bean
 	public Queue producedEnergyQueue() {
 		return new Queue("produced_energy", true);
 	}
