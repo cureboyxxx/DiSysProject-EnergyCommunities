@@ -17,8 +17,8 @@ public class EnergyUserApplication {
 	}
 
 	@Bean
-	public Queue producedEnergyQueue() {
-		return new Queue("produced_energy", true);
+	public Queue usedEnergyQueue() {
+		return new Queue("used_energy", true);
 	}
 
 

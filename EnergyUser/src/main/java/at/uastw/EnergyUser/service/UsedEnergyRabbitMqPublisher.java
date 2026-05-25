@@ -1,6 +1,7 @@
 package at.uastw.EnergyUser.service;
 
 import at.uastw.EnergyUser.model.UsedEnergyMessage;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
@@ -23,13 +24,15 @@ public class UsedEnergyRabbitMqPublisher {
             rabbit.convertAndSend(
                     "used_energy",
                     payload,
-                    rabbitMessage -> {
-                        rabbitMessage.getMessageProperties().setContentType(MessageProperties.CONTENT_TYPE_JSON);
-                        return rabbitMessage;
-                    }
+                    this::setJsonContentType
             );
         } catch (Exception exception) {
             throw new IllegalStateException("Could not publish used energy message", exception);
         }
+    }
+
+    private Message setJsonContentType(Message rabbitMessage) {
+        rabbitMessage.getMessageProperties().setContentType(MessageProperties.CONTENT_TYPE_JSON);
+        return rabbitMessage;
     }
 }
