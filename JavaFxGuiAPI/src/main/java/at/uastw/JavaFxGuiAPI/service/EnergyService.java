@@ -17,6 +17,7 @@ public class EnergyService {
         );
     }
 
+
     public List<HistoricalEnergyResponse> getHistoricalEnergy(String start, String end) {
         // Mock data for 2026-04-01
         // Mock energy community with about 10 single family homes equipped with solar panels
