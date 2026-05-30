@@ -19,17 +19,17 @@ flowchart TB
     B --- |↓ read tables| C
 
 %% DB to services
-    C --- |↑ update percentage table| D
-    C --- |↑ update usage table| E
+    C --- |↑ upsert CurrentPercentage table| D
+    C --- |↑ upsert EnergyUsage table| E
 
 %% Services to / from RabbitMQ
-    D ---|↑ update message| F
-    E ---|↑ producer/user message| F
-    E ---|↓ update message| F
+    D ---|"↑ update message\n(queue: current_percentage)"| F
+    E ---|"↑ producer/user message\n(queue: produced_energy/used_energy)"| F
+    E ---|"↓ update message\n(queue: current_percentage)"| F
 
 %% to Producer/User to RabbitMQ
-    F --- |↑ producer message| G
-    F --- |↑ user message| H
+    F --- |"↑ producer message\n(queue: produced_energy)"| G
+    F --- |"↑ user message\n(queue: used_energy)"| H
 
 %% External data sources
     G --- |↓ use| I
