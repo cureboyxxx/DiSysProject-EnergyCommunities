@@ -22,8 +22,9 @@ public class CurrentPercentageProducer {
 
     public void publish(LocalDateTime datetime) {
         try {
-            CurrentPercentageMsgDto dto = new CurrentPercentageMsgDto();
-            dto.setDatetime(datetime.withMinute(0).withSecond(0).withNano(0));
+            CurrentPercentageMsgDto dto = new CurrentPercentageMsgDto(
+                    datetime.withMinute(0).withSecond(0).withNano(0)
+            );
 
             String payload = objectMapper.writeValueAsString(dto);
 

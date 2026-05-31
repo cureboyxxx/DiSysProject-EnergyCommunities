@@ -3,18 +3,18 @@ package at.uastw.UsageService.dto;
 import java.time.LocalDateTime;
 
 public class CurrentPercentageMsgDto {
-    private LocalDateTime datetime;
+    private LocalDateTime hour;
 
     public CurrentPercentageMsgDto() {}
-    public CurrentPercentageMsgDto(LocalDateTime datetime) {
-        this.datetime = datetime;
+    public CurrentPercentageMsgDto(LocalDateTime hour) {
+        this.hour = hour;
     }
 
-    public LocalDateTime getDatetime() {
-        return datetime;
+    public LocalDateTime getHour() {
+        return hour;
     }
 
-    public void setDatetime(LocalDateTime datetime) {
-        this.datetime = datetime;
+    public void setHour(LocalDateTime hour) {
+        this.hour = hour;
     }
 }

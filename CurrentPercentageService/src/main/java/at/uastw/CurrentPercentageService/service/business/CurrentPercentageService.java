@@ -21,8 +21,8 @@ public class CurrentPercentageService {
     Everything within it is either executed in full or rolled back in full.
      */
     @Transactional
-    public void handleCurrentPercentage(CurrentPercentageMsgDto msg) {
-        LocalDateTime hour = msg.getDatetime()
+    public void handleCurrentPercentage(CurrentPercentageMsgDto dto) {
+        LocalDateTime hour = dto.getHour()
                 .withMinute(0).withSecond(0).withNano(0);
         repository.upsertCurrentPercentage(hour);
     }
