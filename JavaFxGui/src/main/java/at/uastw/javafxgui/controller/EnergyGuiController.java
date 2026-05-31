@@ -21,6 +21,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
@@ -71,13 +72,13 @@ public class EnergyGuiController {
                 .IntegerSpinnerValueFactory(0, 23, 0));
         spinner_TimeHourEnd.setEditable(true);
 
-        LocalDate nowDate = LocalDate.now();
-        datePicker_Start.setValue(nowDate);
-        datePicker_End.setValue(nowDate);
+        LocalDateTime now = LocalDateTime.now();
 
-        LocalTime nowTime = LocalTime.now();
-        spinner_TimeHourStart.getValueFactory().setValue(nowTime.getHour());
-        spinner_TimeHourEnd.getValueFactory().setValue(nowTime.getHour());
+        datePicker_Start.setValue(now.toLocalDate());
+        datePicker_End.setValue(now.toLocalDate());
+
+        spinner_TimeHourStart.getValueFactory().setValue(now.getHour());
+        spinner_TimeHourEnd.getValueFactory().setValue(now.getHour());
 
         updateCircleHeartbeat();
 
