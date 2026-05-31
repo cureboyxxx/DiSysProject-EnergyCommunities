@@ -25,25 +25,24 @@ public interface EnergyUsageRepository extends JpaRepository<EnergyUsageEntity, 
         VALUES (:hour, :amount, 0, 0)
         ON CONFLICT (hour)
         DO UPDATE SET
-            community_produced = EnergyUsage.community_produced + EXCLUDED.community_produced
+            community_produced = EnergyUsage.community_produced + :amount
         """, nativeQuery = true)
     void upsertProduced(LocalDateTime hour, double amount);
 
     @Modifying
     @Query(value = """
         INSERT INTO EnergyUsage (hour, community_produced, community_used, grid_used)
-        VALUES (:hour, 0, :amount, 0)
+        VALUES (:hour, 0, 0, :amount)
         ON CONFLICT (hour)
         DO UPDATE SET
             community_used = LEAST(
-                EnergyUsage.community_used + EXCLUDED.community_used,
+                EnergyUsage.community_used + :amount,
                 EnergyUsage.community_produced
             ),
             grid_used = GREATEST(
-                (EnergyUsage.community_used + EnergyUsage.grid_used + EXCLUDED.community_used)
-                - EnergyUsage.community_produced,
-                0
-            )
+                EnergyUsage.grid_used,
+                (EnergyUsage.community_used + EnergyUsage.grid_used + :amount) - EnergyUsage.community_produced
+            );
         """, nativeQuery = true)
     void upsertUsed(LocalDateTime hour, double amount);
 }
