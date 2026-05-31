@@ -1,4 +1,4 @@
-package at.uastw.UsageService.dto;
+package at.uastw.CurrentPercentageService.dto;
 
 import java.time.LocalDateTime;
 
