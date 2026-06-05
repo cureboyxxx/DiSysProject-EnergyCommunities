@@ -199,16 +199,28 @@ public class EnergyGuiController {
                 return;
             }
 
-            HistoricalEnergyResponse last = historicalEnergyResponse.get(historicalEnergyResponse.size() - 1);
+            double totalProduced = historicalEnergyResponse.stream()
+                    .mapToDouble(HistoricalEnergyResponse::getCommunityProduced)
+                    .sum();
+
+            double totalUsed = historicalEnergyResponse.stream()
+                    .mapToDouble(HistoricalEnergyResponse::getCommunityUsed)
+                    .sum();
+
+            double totalGrid = historicalEnergyResponse.stream()
+                    .mapToDouble(HistoricalEnergyResponse::getGridUsed)
+                    .sum();
 
             lb_communityProducedValue.setText(
-                    String.format("%.3f kWh", last.getCommunityProduced())
+                    String.format("%.3f kWh", totalProduced)
             );
+
             lb_communityUsedValue.setText(
-                    String.format("%.3f kWh", last.getCommunityUsed())
+                    String.format("%.3f kWh", totalUsed)
             );
+
             lb_gridUsedValue.setText(
-                    String.format("%.3f kWh", last.getGridUsed())
+                    String.format("%.3f kWh", totalGrid)
             );
 
         } catch (Exception e) {
