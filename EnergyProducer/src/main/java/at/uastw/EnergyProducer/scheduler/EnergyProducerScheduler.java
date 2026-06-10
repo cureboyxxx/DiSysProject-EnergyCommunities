@@ -26,7 +26,7 @@ public class EnergyProducerScheduler {
         producedEnergyMessage.setType("PRODUCER");
         producedEnergyMessage.setAssociation("COMMUNITY");
         producedEnergyMessage.setAmountInKwh(generatedEnergyInKwh);
-        producedEnergyMessage.setDatetime(LocalDateTime.now().toString());
+        producedEnergyMessage.setDatetime(LocalDateTime.now());
 
         messagePublisher.publishMessage(producedEnergyMessage);
     }
