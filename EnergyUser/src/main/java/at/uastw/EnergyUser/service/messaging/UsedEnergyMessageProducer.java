@@ -1,4 +1,4 @@
-package at.uastw.EnergyUser.service;
+package at.uastw.EnergyUser.service.messaging;
 
 import at.uastw.EnergyUser.model.UsedEnergyMessage;
 import org.springframework.amqp.core.Message;
@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
 
 @Service
-public class UsedEnergyRabbitMqPublisher {
+public class UsedEnergyMessageProducer {
 
     private final RabbitTemplate rabbit;
     private final ObjectMapper objectMapper;
 
-    public UsedEnergyRabbitMqPublisher(RabbitTemplate rabbit, ObjectMapper objectMapper) {
+    public UsedEnergyMessageProducer(RabbitTemplate rabbit, ObjectMapper objectMapper) {
         this.rabbit = rabbit;
         this.objectMapper = objectMapper;
     }

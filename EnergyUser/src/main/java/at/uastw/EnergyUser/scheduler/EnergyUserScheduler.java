@@ -1,7 +1,7 @@
 package at.uastw.EnergyUser.scheduler;
 
 import at.uastw.EnergyUser.model.UsedEnergyMessage;
-import at.uastw.EnergyUser.service.UsedEnergyRabbitMqPublisher;
+import at.uastw.EnergyUser.service.messaging.UsedEnergyMessageProducer;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -11,9 +11,9 @@ import java.util.concurrent.ThreadLocalRandom;
 @Component
 public class EnergyUserScheduler {
 
-    private final UsedEnergyRabbitMqPublisher messagePublisher;
+    private final UsedEnergyMessageProducer messagePublisher;
 
-    public EnergyUserScheduler(UsedEnergyRabbitMqPublisher messagePublisher) {
+    public EnergyUserScheduler(UsedEnergyMessageProducer messagePublisher) {
         this.messagePublisher = messagePublisher;
     }
 
