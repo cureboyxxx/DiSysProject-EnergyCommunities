@@ -25,7 +25,7 @@ public class EnergyUserScheduler {
         usedEnergyMessage.setType("USER");
         usedEnergyMessage.setAssociation("COMMUNITY");
         usedEnergyMessage.setAmountInKwh(usedEnergyInKwh);
-        usedEnergyMessage.setDatetime(LocalDateTime.now().toString());
+        usedEnergyMessage.setDatetime(LocalDateTime.now());
 
         messagePublisher.publishMessage(usedEnergyMessage);
     }
