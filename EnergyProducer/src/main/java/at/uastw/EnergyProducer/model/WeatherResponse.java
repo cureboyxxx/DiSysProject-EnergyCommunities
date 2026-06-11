@@ -6,6 +6,7 @@ public class WeatherResponse {
     private CurrentWeather current;
 
     public CurrentWeather getCurrent() { return current; }
+
     public void setCurrent(CurrentWeather current) { this.current = current; }
 
     public static class CurrentWeather {

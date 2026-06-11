@@ -1,8 +1,8 @@
 package at.uastw.EnergyProducer.scheduler;
 
 import at.uastw.EnergyProducer.model.ProducedEnergyMessage;
-import at.uastw.EnergyProducer.service.ProducedEnergyRabbitMqPublisher;
-import at.uastw.EnergyProducer.service.SolarEnergyGenerator;
+import at.uastw.EnergyProducer.service.messaging.ProducedEnergyMessageProducer;
+import at.uastw.EnergyProducer.service.business.SolarEnergyGeneratorService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 
 @Component
 public class EnergyProducerScheduler {
-    private final SolarEnergyGenerator energyGenerator;
-    private final ProducedEnergyRabbitMqPublisher messagePublisher;
+    private final SolarEnergyGeneratorService energyGenerator;
+    private final ProducedEnergyMessageProducer messagePublisher;
 
-    public EnergyProducerScheduler(SolarEnergyGenerator energyGenerator, ProducedEnergyRabbitMqPublisher messagePublisher) {
+    public EnergyProducerScheduler(SolarEnergyGeneratorService energyGenerator, ProducedEnergyMessageProducer messagePublisher) {
         this.energyGenerator = energyGenerator;
         this.messagePublisher = messagePublisher;
     }
@@ -26,7 +26,7 @@ public class EnergyProducerScheduler {
         producedEnergyMessage.setType("PRODUCER");
         producedEnergyMessage.setAssociation("COMMUNITY");
         producedEnergyMessage.setAmountInKwh(generatedEnergyInKwh);
-        producedEnergyMessage.setDatetime(LocalDateTime.now().toString());
+        producedEnergyMessage.setDatetime(LocalDateTime.now());
 
         messagePublisher.publishMessage(producedEnergyMessage);
     }

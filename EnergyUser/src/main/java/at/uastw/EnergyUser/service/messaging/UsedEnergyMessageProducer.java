@@ -1,6 +1,6 @@
-package at.uastw.EnergyProducer.service;
+package at.uastw.EnergyUser.service.messaging;
 
-import at.uastw.EnergyProducer.model.ProducedEnergyMessage;
+import at.uastw.EnergyUser.model.UsedEnergyMessage;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -8,26 +8,26 @@ import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
 
 @Service
-public class ProducedEnergyRabbitMqPublisher {
+public class UsedEnergyMessageProducer {
 
     private final RabbitTemplate rabbit;
     private final ObjectMapper objectMapper;
 
-    public ProducedEnergyRabbitMqPublisher(RabbitTemplate rabbit, ObjectMapper objectMapper) {
+    public UsedEnergyMessageProducer(RabbitTemplate rabbit, ObjectMapper objectMapper) {
         this.rabbit = rabbit;
         this.objectMapper = objectMapper;
     }
 
-    public void publishMessage(ProducedEnergyMessage message) {
+    public void publishMessage(UsedEnergyMessage message) {
         try {
             String payload = objectMapper.writeValueAsString(message);
             rabbit.convertAndSend(
-                    "produced_energy",
+                    "used_energy",
                     payload,
                     this::setJsonContentType
             );
         } catch (Exception exception) {
-            throw new IllegalStateException("Could not publish produced energy message", exception);
+            throw new IllegalStateException("Could not publish used energy message", exception);
         }
     }
 

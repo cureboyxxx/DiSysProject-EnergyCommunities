@@ -1,4 +1,4 @@
-package at.uastw.EnergyProducer.service;
+package at.uastw.EnergyProducer.service.business;
 
 import at.uastw.EnergyProducer.model.WeatherCondition;
 import at.uastw.EnergyProducer.model.WeatherResponse;

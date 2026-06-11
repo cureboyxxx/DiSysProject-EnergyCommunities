@@ -1,27 +1,16 @@
-package at.uastw.EnergyProducer.service;
+package at.uastw.EnergyProducer.service.business;
 
 import at.uastw.EnergyProducer.model.WeatherCondition;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
-// This generates mock data based on the info from the
-// weatherAPI for a typical solar panel energy source
-
-// This is how I understand the requirements
-// in the project specification - Mario
-
-// In theory, we could also add a mock wind turbine, etc.
-// but I do not think that adds anything to the project
-// because this would generate the same mock data
-// based on slightly different variables
-
 @Service
-public class SolarEnergyGenerator {
+public class SolarEnergyGeneratorService {
     private final OpenMeteoWeatherService weatherService;
     private final Random random = new Random();
 
-    public SolarEnergyGenerator(OpenMeteoWeatherService weatherService) {
+    public SolarEnergyGeneratorService(OpenMeteoWeatherService weatherService) {
         this.weatherService = weatherService;
     }
 
