@@ -1,25 +1,30 @@
 package at.uastw.JavaFxGuiAPI.dto;
 
+import java.time.LocalDateTime;
+
 public class CurrentEnergyResponse {
 
-    private String hour;
+    private LocalDateTime hour;
     private double communityDepleted;
     private double gridPortion;
 
     public CurrentEnergyResponse() {
     }
 
-    public CurrentEnergyResponse(String hour, double communityDepleted, double gridPortion) {
+    public CurrentEnergyResponse(LocalDateTime hour,
+                                 double communityDepleted,
+                                 double gridPortion) {
+
         this.hour = hour;
         this.communityDepleted = communityDepleted;
         this.gridPortion = gridPortion;
     }
 
-    public String getHour() {
+    public LocalDateTime getHour() {
         return hour;
     }
 
-    public void setHour(String hour) {
+    public void setHour(LocalDateTime hour) {
         this.hour = hour;
     }
 

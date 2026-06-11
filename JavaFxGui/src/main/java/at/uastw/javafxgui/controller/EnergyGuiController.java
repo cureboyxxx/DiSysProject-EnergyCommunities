@@ -114,6 +114,7 @@ public class EnergyGuiController {
             );
 
             ObjectMapper mapper = new ObjectMapper();
+            mapper.findAndRegisterModules();
             CurrentEnergyResponse currentEnergyResponse = mapper.readValue(
                     response.body(),
                     CurrentEnergyResponse.class
@@ -188,6 +189,7 @@ public class EnergyGuiController {
             );
 
             ObjectMapper mapper = new ObjectMapper();
+            mapper.findAndRegisterModules();
             List<HistoricalEnergyResponse> historicalEnergyResponse = Arrays.asList(
                     mapper.readValue(response.body(), HistoricalEnergyResponse[].class)
             );
