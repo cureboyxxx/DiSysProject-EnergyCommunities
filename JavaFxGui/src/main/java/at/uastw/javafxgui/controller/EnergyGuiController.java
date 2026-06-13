@@ -147,14 +147,17 @@ public class EnergyGuiController {
             lb_errorMessage.setVisible(false);
             lb_errorMessage.setManaged(false);
 
-            LocalDate startDate = datePicker_Start.getValue();
-            LocalDate endDate = datePicker_End.getValue();
+            LocalDateTime startDateTime = LocalDateTime.of(
+                    datePicker_Start.getValue(),
+                    LocalTime.of(spinner_TimeHourStart.getValue(), 0)
+            );
 
-            LocalTime startTime = LocalTime.of(spinner_TimeHourStart.getValue(), 0);
+            LocalDateTime endDateTime = LocalDateTime.of(
+                    datePicker_End.getValue(),
+                    LocalTime.of(spinner_TimeHourEnd.getValue(), 0)
+            );
 
-            LocalTime endTime = LocalTime.of(spinner_TimeHourEnd.getValue(), 0);
-
-            if (!startDate.atTime(startTime).isBefore(endDate.atTime(endTime)) && !startDate.atTime(startTime).isEqual(endDate.atTime(endTime))) {
+            if (startDateTime.isAfter(endDateTime)) {
 
                 lb_errorMessage.setText("Start date/time not before end.");
                 lb_errorMessage.setVisible(true);
@@ -163,21 +166,15 @@ public class EnergyGuiController {
                 lb_communityProducedValue.setText("no data");
                 lb_communityUsedValue.setText("no data");
                 lb_gridUsedValue.setText("no data");
+
                 return;
             }
 
-            String start = buildTimestamp(
-                    startDate,
-                    spinner_TimeHourStart.getValue()
-            );
-
-            String end = buildTimestamp(
-                    endDate,
-                    spinner_TimeHourEnd.getValue()
-            );
 
             String urlString = "http://localhost:8083/energy/historical?start="
-                    + start + "&end=" + end;
+                            + startDateTime
+                            + "&end="
+                            + endDateTime;
 
             HttpRequest getRequest = HttpRequest.newBuilder()
                     .uri(URI.create(urlString))
@@ -239,6 +236,6 @@ public class EnergyGuiController {
     }
 
     private String buildTimestamp(LocalDate date, Integer hour) {
-        return String.format("%sT%02d:00:00", date, hour);
+        return String.format("%sT%02d:00:00", date, hour); //TODO
     }
 }

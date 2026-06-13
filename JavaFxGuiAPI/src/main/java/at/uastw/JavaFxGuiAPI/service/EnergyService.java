@@ -41,17 +41,15 @@ public class EnergyService {
     }
 
     public List<HistoricalEnergyResponse> getHistoricalEnergy(
-            String start,
-            String end
+            LocalDateTime start,
+            LocalDateTime end
     ) {
 
-        LocalDateTime startTime = LocalDateTime.parse(start);
-        LocalDateTime endTime = LocalDateTime.parse(end);
 
         List<EnergyUsageEntity> usages =
                 energyUsageRepository.findByHourBetweenOrderByHourAsc(
-                        startTime,
-                        endTime
+                        start,
+                        end
                 );
 
         List<HistoricalEnergyResponse> responses = new ArrayList<>();

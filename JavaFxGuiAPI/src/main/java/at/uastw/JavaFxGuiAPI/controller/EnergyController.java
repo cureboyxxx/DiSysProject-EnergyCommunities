@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -28,7 +29,7 @@ public class EnergyController {
     }
 
     @GetMapping("/historical")
-    public List<HistoricalEnergyResponse> getHistoricalEnergy(@RequestParam String start, @RequestParam String end) {
+    public List<HistoricalEnergyResponse> getHistoricalEnergy(@RequestParam LocalDateTime start, @RequestParam LocalDateTime end) {
         System.out.println("GET /energy/historical called: start=" + start + ", end=" + end);
         return energyService.getHistoricalEnergy(start, end);
     }
