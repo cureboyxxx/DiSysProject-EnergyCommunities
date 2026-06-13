@@ -1,12 +1,14 @@
 package at.uastw.javafxgui.dto;
 
+import java.time.LocalDateTime;
+
 public class CurrentEnergyResponse {
 
-    public String hour;
+    public LocalDateTime hour;
     public double communityDepleted;
     public double gridPortion;
 
-    public String getHour() {
+    public LocalDateTime getHour() {
         return hour;
     }
 

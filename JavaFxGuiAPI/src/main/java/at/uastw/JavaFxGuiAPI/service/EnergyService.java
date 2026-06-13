@@ -35,7 +35,7 @@ public class EnergyService {
         }
 
         return new CurrentEnergyResponse(
-                current.getHour().toString(),
+                current.getHour(),
                 current.getCommunityDepleted(),
                 current.getGridPortion()
         );
@@ -57,7 +57,7 @@ public class EnergyService {
 
         return usages.stream()
                 .map(usage -> new HistoricalEnergyResponse(
-                        usage.getHour().toString(),
+                        usage.getHour(),
                         usage.getCommunityProduced(),
                         usage.getCommunityUsed(),
                         usage.getGridUsed()

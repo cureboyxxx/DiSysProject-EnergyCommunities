@@ -1,8 +1,10 @@
 package at.uastw.JavaFxGuiAPI.dto;
 
+import java.time.LocalDateTime;
+
 public class HistoricalEnergyResponse {
 
-    private String hour;
+    private LocalDateTime hour;
     private double communityProduced;
     private double communityUsed;
     private double gridUsed;
@@ -10,18 +12,22 @@ public class HistoricalEnergyResponse {
     public HistoricalEnergyResponse() {
     }
 
-    public HistoricalEnergyResponse(String hour, double communityProduced, double communityUsed, double gridUsed) {
+    public HistoricalEnergyResponse(LocalDateTime hour,
+                                    double communityProduced,
+                                    double communityUsed,
+                                    double gridUsed) {
+
         this.hour = hour;
         this.communityProduced = communityProduced;
         this.communityUsed = communityUsed;
         this.gridUsed = gridUsed;
     }
 
-    public String getHour() {
+    public LocalDateTime getHour() {
         return hour;
     }
 
-    public void setHour(String hour) {
+    public void setHour(LocalDateTime hour) {
         this.hour = hour;
     }
 
