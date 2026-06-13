@@ -18,7 +18,7 @@ public class EnergyProducerScheduler {
         this.messageProducer = messageProducer;
     }
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedDelayString = "#{T(java.util.concurrent.ThreadLocalRandom).current().nextInt(1000, 5001)}")
     public void produceEnergyAndSendProducedEnergyMessage() {
         double producedEnergyInKwh = energyGenerator.produceEnergyInKwh();
 

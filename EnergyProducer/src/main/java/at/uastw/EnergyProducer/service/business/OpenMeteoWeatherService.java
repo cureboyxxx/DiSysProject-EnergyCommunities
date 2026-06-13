@@ -29,8 +29,7 @@ public class OpenMeteoWeatherService {
             throw new IllegalStateException("OpenMeteo response did not include the current weather data");
         }
 
-        int isDayAsNumber = response.getCurrent().getIsDay();
-        boolean isDay = isDayAsNumber == 1;
+        boolean isDay = response.getCurrent().getIsDay() == 1;
 
         int cloudCover = response.getCurrent().getCloudCover();
 
