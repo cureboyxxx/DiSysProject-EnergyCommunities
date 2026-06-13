@@ -1,6 +1,6 @@
 package at.uastw.EnergyUser.service.messaging;
 
-import at.uastw.EnergyUser.model.UsedEnergyMessage;
+import at.uastw.EnergyUser.dto.UsedEnergyMessageDto;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -18,7 +18,7 @@ public class UsedEnergyMessageProducer {
         this.objectMapper = objectMapper;
     }
 
-    public void publishMessage(UsedEnergyMessage message) {
+    public void publishMessage(UsedEnergyMessageDto message) {
         try {
             String payload = objectMapper.writeValueAsString(message);
             rabbit.convertAndSend(

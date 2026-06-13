@@ -1,6 +1,6 @@
 package at.uastw.EnergyUser.scheduler;
 
-import at.uastw.EnergyUser.model.UsedEnergyMessage;
+import at.uastw.EnergyUser.dto.UsedEnergyMessageDto;
 import at.uastw.EnergyUser.service.messaging.UsedEnergyMessageProducer;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -11,23 +11,23 @@ import java.util.concurrent.ThreadLocalRandom;
 @Component
 public class EnergyUserScheduler {
 
-    private final UsedEnergyMessageProducer messagePublisher;
+    private final UsedEnergyMessageProducer messageProducer;
 
-    public EnergyUserScheduler(UsedEnergyMessageProducer messagePublisher) {
-        this.messagePublisher = messagePublisher;
+    public EnergyUserScheduler(UsedEnergyMessageProducer messageProducer) {
+        this.messageProducer = messageProducer;
     }
 
     @Scheduled(fixedRate = 5000)
     public void useEnergyANDsendUsedEnergyMessage() {
         double usedEnergyInKwh = generateUsedEnergyInKwh();
 
-        UsedEnergyMessage usedEnergyMessage = new UsedEnergyMessage();
+        UsedEnergyMessageDto usedEnergyMessage = new UsedEnergyMessageDto();
         usedEnergyMessage.setType("USER");
         usedEnergyMessage.setAssociation("COMMUNITY");
         usedEnergyMessage.setAmountInKwh(usedEnergyInKwh);
         usedEnergyMessage.setDatetime(LocalDateTime.now());
 
-        messagePublisher.publishMessage(usedEnergyMessage);
+        messageProducer.publishMessage(usedEnergyMessage);
     }
 
     private double generateUsedEnergyInKwh() {
