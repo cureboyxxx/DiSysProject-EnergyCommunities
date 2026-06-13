@@ -11,10 +11,7 @@ public class CurrentEnergyResponse {
     public CurrentEnergyResponse() {
     }
 
-    public CurrentEnergyResponse(LocalDateTime hour,
-                                 double communityDepleted,
-                                 double gridPortion) {
-
+    public CurrentEnergyResponse(LocalDateTime hour, double communityDepleted, double gridPortion) {
         this.hour = hour;
         this.communityDepleted = communityDepleted;
         this.gridPortion = gridPortion;

@@ -26,10 +26,7 @@ public class EnergyController {
     }
 
     @GetMapping("/energy/historical")
-    public List<HistoricalEnergyResponse> getHistoricalEnergy(
-            @RequestParam String start,
-            @RequestParam String end
-    ) {
+    public List<HistoricalEnergyResponse> getHistoricalEnergy(@RequestParam String start, @RequestParam String end) {
         System.out.println("GET /energy/historical called: start=" + start + ", end=" + end);
         return energyService.getHistoricalEnergy(start, end);
     }
