@@ -21,12 +21,12 @@ public class EnergyUserScheduler {
     public void useEnergyAndSendUsedEnergyMessage() {
         double usedEnergyInKwh = generateUsedEnergyInKwh();
 
-        UsedEnergyMessageDto message = new UsedEnergyMessageDto();
-
-        message.setType("USER");
-        message.setAssociation("COMMUNITY");
-        message.setAmountInKwh(usedEnergyInKwh);
-        message.setDatetime(LocalDateTime.now());
+        UsedEnergyMessageDto message = new UsedEnergyMessageDto(
+                "USER",
+                "COMMUNITY",
+                usedEnergyInKwh,
+                LocalDateTime.now()
+        );
 
         messageProducer.publish(message);
     }
