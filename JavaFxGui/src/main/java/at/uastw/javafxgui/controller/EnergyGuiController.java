@@ -84,6 +84,9 @@ public class EnergyGuiController {
 
         heartbeatTimeline.setCycleCount(Animation.INDEFINITE);
         heartbeatTimeline.play();
+
+        onBtnRefreshClick();
+        onBtnShowDataClick();
     }
 
     private void updateCircleHeartbeat() {
@@ -144,14 +147,17 @@ public class EnergyGuiController {
             lb_errorMessage.setVisible(false);
             lb_errorMessage.setManaged(false);
 
-            LocalDate startDate = datePicker_Start.getValue();
-            LocalDate endDate = datePicker_End.getValue();
+            LocalDateTime startDateTime = LocalDateTime.of(
+                    datePicker_Start.getValue(),
+                    LocalTime.of(spinner_TimeHourStart.getValue(), 0)
+            );
 
-            LocalTime startTime = LocalTime.of(spinner_TimeHourStart.getValue(), 0);
+            LocalDateTime endDateTime = LocalDateTime.of(
+                    datePicker_End.getValue(),
+                    LocalTime.of(spinner_TimeHourEnd.getValue(), 0)
+            );
 
-            LocalTime endTime = LocalTime.of(spinner_TimeHourEnd.getValue(), 0);
-
-            if (!startDate.atTime(startTime).isBefore(endDate.atTime(endTime))) {
+            if (startDateTime.isAfter(endDateTime)) {
 
                 lb_errorMessage.setText("Start date/time not before end.");
                 lb_errorMessage.setVisible(true);
@@ -160,21 +166,15 @@ public class EnergyGuiController {
                 lb_communityProducedValue.setText("no data");
                 lb_communityUsedValue.setText("no data");
                 lb_gridUsedValue.setText("no data");
+
                 return;
             }
 
-            String start = buildTimestamp(
-                    startDate,
-                    spinner_TimeHourStart.getValue()
-            );
-
-            String end = buildTimestamp(
-                    endDate,
-                    spinner_TimeHourEnd.getValue()
-            );
 
             String urlString = "http://localhost:8083/energy/historical?start="
-                    + start + "&end=" + end;
+                            + startDateTime
+                            + "&end="
+                            + endDateTime;
 
             HttpRequest getRequest = HttpRequest.newBuilder()
                     .uri(URI.create(urlString))
@@ -201,17 +201,15 @@ public class EnergyGuiController {
                 return;
             }
 
-            double totalProduced = historicalEnergyResponse.stream()
-                    .mapToDouble(HistoricalEnergyResponse::getCommunityProduced)
-                    .sum();
+            double totalProduced = 0;
+            double totalUsed = 0;
+            double totalGrid = 0;
 
-            double totalUsed = historicalEnergyResponse.stream()
-                    .mapToDouble(HistoricalEnergyResponse::getCommunityUsed)
-                    .sum();
-
-            double totalGrid = historicalEnergyResponse.stream()
-                    .mapToDouble(HistoricalEnergyResponse::getGridUsed)
-                    .sum();
+            for (HistoricalEnergyResponse usage : historicalEnergyResponse) {
+                totalProduced += usage.getCommunityProduced();
+                totalUsed += usage.getCommunityUsed();
+                totalGrid += usage.getGridUsed();
+            }
 
             lb_communityProducedValue.setText(
                     String.format("%.3f kWh", totalProduced)
@@ -235,9 +233,5 @@ public class EnergyGuiController {
             lb_gridUsedValue.setText("error");
             System.err.println("GET request failed: " + e);
         }
-    }
-
-    private String buildTimestamp(LocalDate date, Integer hour) {
-        return String.format("%sT%02d:00:00", date, hour);
     }
 }
