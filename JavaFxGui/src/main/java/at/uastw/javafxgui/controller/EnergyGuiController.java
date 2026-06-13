@@ -84,6 +84,9 @@ public class EnergyGuiController {
 
         heartbeatTimeline.setCycleCount(Animation.INDEFINITE);
         heartbeatTimeline.play();
+
+        onBtnRefreshClick();
+        onBtnShowDataClick();
     }
 
     private void updateCircleHeartbeat() {
@@ -151,7 +154,7 @@ public class EnergyGuiController {
 
             LocalTime endTime = LocalTime.of(spinner_TimeHourEnd.getValue(), 0);
 
-            if (!startDate.atTime(startTime).isBefore(endDate.atTime(endTime))) {
+            if (!startDate.atTime(startTime).isBefore(endDate.atTime(endTime)) && !startDate.atTime(startTime).isEqual(endDate.atTime(endTime))) {
 
                 lb_errorMessage.setText("Start date/time not before end.");
                 lb_errorMessage.setVisible(true);
@@ -201,17 +204,15 @@ public class EnergyGuiController {
                 return;
             }
 
-            double totalProduced = historicalEnergyResponse.stream()
-                    .mapToDouble(HistoricalEnergyResponse::getCommunityProduced)
-                    .sum();
+            double totalProduced = 0;
+            double totalUsed = 0;
+            double totalGrid = 0;
 
-            double totalUsed = historicalEnergyResponse.stream()
-                    .mapToDouble(HistoricalEnergyResponse::getCommunityUsed)
-                    .sum();
-
-            double totalGrid = historicalEnergyResponse.stream()
-                    .mapToDouble(HistoricalEnergyResponse::getGridUsed)
-                    .sum();
+            for (HistoricalEnergyResponse usage : historicalEnergyResponse) {
+                totalProduced += usage.getCommunityProduced();
+                totalUsed += usage.getCommunityUsed();
+                totalGrid += usage.getGridUsed();
+            }
 
             lb_communityProducedValue.setText(
                     String.format("%.3f kWh", totalProduced)
