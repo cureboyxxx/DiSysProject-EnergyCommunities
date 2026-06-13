@@ -18,7 +18,7 @@ public class EnergyUserScheduler {
     }
 
     @Scheduled(fixedRate = 5000)
-    public void useEnergyANDsendUsedEnergyMessage() {
+    public void useEnergyAndSendUsedEnergyMessage() {
         double usedEnergyInKwh = generateUsedEnergyInKwh();
 
         UsedEnergyMessageDto message = new UsedEnergyMessageDto();
@@ -32,11 +32,19 @@ public class EnergyUserScheduler {
     }
 
     private double generateUsedEnergyInKwh() {
-        // dailykWh = random dailykWh per home * number of homes
-        double dailyKwh = ThreadLocalRandom.current().nextDouble(8.0, 35.0) * 10;
+        double schedulerIntervalInSeconds = 5.0;
+        int secondsPerDay = 24 * 60 * 60;
 
-        // intervalkWh = dailykWh * scheduler interval seconds / seconds per day
-        double intervalKwh = dailyKwh * 5.0 / (24 * 60 * 60);
+        double minimumDailyKwhPerHome = 8.0;
+        double maximumDailyKwhPerHome = 35.0;
+        int numberOfHomes = 10;
+
+        double randomDailyKwhPerHome = ThreadLocalRandom.current()
+                .nextDouble(minimumDailyKwhPerHome, maximumDailyKwhPerHome);
+
+        double dailyKwh = randomDailyKwhPerHome * numberOfHomes;
+
+        double intervalKwh = dailyKwh * schedulerIntervalInSeconds / secondsPerDay;
 
         // rounding to 3 decimal places
         return Math.round(intervalKwh * 1000.0) / 1000.0;
