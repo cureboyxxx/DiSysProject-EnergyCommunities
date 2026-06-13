@@ -234,8 +234,4 @@ public class EnergyGuiController {
             System.err.println("GET request failed: " + e);
         }
     }
-
-    private String buildTimestamp(LocalDate date, Integer hour) {
-        return String.format("%sT%02d:00:00", date, hour); //TODO
-    }
 }
