@@ -15,9 +15,13 @@ public class SolarEnergyGeneratorService {
     }
 
     public double produceEnergyInKwh() {
-        double baseProducedEnergyInKwh = 0.00025;
-        double efficiencyLossPerCloudCoverPercentagePoint = 0.008;
+        double schedulerIntervalInSeconds = 5.0;
+        int secondsPerDay = 24 * 60 * 60;
 
+        double minimumDailyKwh = 10.0;
+        double maximumDailyKwh = 15.0;
+
+        double efficiencyLossPerCloudCoverPercentagePoint = 0.008;
         double minimumEnergyMultiplier = 0.85;
         double randomEnergyMultiplierRange = 0.30;
 
@@ -27,11 +31,16 @@ public class SolarEnergyGeneratorService {
             return 0.0;
         }
 
+        double randomDailyKwh = random.nextDouble(minimumDailyKwh, maximumDailyKwh);
+        double intervalKwh = randomDailyKwh * schedulerIntervalInSeconds / secondsPerDay;
+
         double cloudCover = weatherCondition.getCloudCover();
         double cloudCoverAdjustedEfficiency = 1.0 - (cloudCover * efficiencyLossPerCloudCoverPercentagePoint);
-
         double energyMultiplier = minimumEnergyMultiplier + (random.nextDouble() * randomEnergyMultiplierRange);
 
-        return baseProducedEnergyInKwh * cloudCoverAdjustedEfficiency * energyMultiplier;
+        double producedEnergyInKwh = intervalKwh * cloudCoverAdjustedEfficiency * energyMultiplier;
+
+        // rounding to 3 decimal places
+        return Math.round(producedEnergyInKwh * 1000.0) / 1000.0;
     }
 }
