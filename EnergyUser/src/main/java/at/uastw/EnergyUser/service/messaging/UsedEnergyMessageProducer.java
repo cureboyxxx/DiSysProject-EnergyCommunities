@@ -18,16 +18,18 @@ public class UsedEnergyMessageProducer {
         this.objectMapper = objectMapper;
     }
 
-    public void publishMessage(UsedEnergyMessageDto message) {
+    public void publish(UsedEnergyMessageDto message) {
         try {
             String payload = objectMapper.writeValueAsString(message);
+
             rabbit.convertAndSend(
                     "used_energy",
                     payload,
                     this::setJsonContentType
             );
-        } catch (Exception exception) {
-            throw new IllegalStateException("Could not publish used energy message", exception);
+
+        } catch (Exception ex) {
+            throw new IllegalStateException("Could not publish used_energy message", ex);
         }
     }
 

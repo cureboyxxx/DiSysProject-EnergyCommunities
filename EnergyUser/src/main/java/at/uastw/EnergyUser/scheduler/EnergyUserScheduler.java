@@ -21,19 +21,19 @@ public class EnergyUserScheduler {
     public void useEnergyANDsendUsedEnergyMessage() {
         double usedEnergyInKwh = generateUsedEnergyInKwh();
 
-        UsedEnergyMessageDto usedEnergyMessage = new UsedEnergyMessageDto();
-        usedEnergyMessage.setType("USER");
-        usedEnergyMessage.setAssociation("COMMUNITY");
-        usedEnergyMessage.setAmountInKwh(usedEnergyInKwh);
-        usedEnergyMessage.setDatetime(LocalDateTime.now());
+        UsedEnergyMessageDto message = new UsedEnergyMessageDto();
 
-        messageProducer.publishMessage(usedEnergyMessage);
+        message.setType("USER");
+        message.setAssociation("COMMUNITY");
+        message.setAmountInKwh(usedEnergyInKwh);
+        message.setDatetime(LocalDateTime.now());
+
+        messageProducer.publish(message);
     }
 
     private double generateUsedEnergyInKwh() {
         // dailykWh = random dailykWh per home * number of homes
-        double dailyKwh = ThreadLocalRandom.current()
-                .nextDouble(8.0, 35.0) * 10;
+        double dailyKwh = ThreadLocalRandom.current().nextDouble(8.0, 35.0) * 10;
 
         // intervalkWh = dailykWh * scheduler interval seconds / seconds per day
         double intervalKwh = dailyKwh * 5.0 / (24 * 60 * 60);

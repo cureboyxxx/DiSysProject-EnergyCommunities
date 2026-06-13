@@ -49,4 +49,3 @@ public class UsedEnergyMessageDto {
         this.datetime = datetime;
     }
 }
-
