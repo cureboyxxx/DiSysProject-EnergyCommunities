@@ -9,6 +9,7 @@ import at.uastw.JavaFxGuiAPI.repository.EnergyUsageRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,9 +18,7 @@ public class EnergyService {
     private final EnergyUsageRepository energyUsageRepository;
     private final CurrentPercentageRepository currentPercentageRepository;
 
-    public EnergyService(
-            EnergyUsageRepository energyUsageRepository,
-            CurrentPercentageRepository currentPercentageRepository
+    public EnergyService(EnergyUsageRepository energyUsageRepository, CurrentPercentageRepository currentPercentageRepository
     ) {
         this.energyUsageRepository = energyUsageRepository;
         this.currentPercentageRepository = currentPercentageRepository;
@@ -55,13 +54,21 @@ public class EnergyService {
                         endTime
                 );
 
-        return usages.stream()
-                .map(usage -> new HistoricalEnergyResponse(
-                        usage.getHour(),
-                        usage.getCommunityProduced(),
-                        usage.getCommunityUsed(),
-                        usage.getGridUsed()
-                ))
-                .toList();
+        List<HistoricalEnergyResponse> responses = new ArrayList<>();
+
+        for (EnergyUsageEntity usage : usages) {
+
+            HistoricalEnergyResponse response =
+                    new HistoricalEnergyResponse(
+                            usage.getHour(),
+                            usage.getCommunityProduced(),
+                            usage.getCommunityUsed(),
+                            usage.getGridUsed()
+                    );
+
+            responses.add(response);
+        }
+
+        return responses;
     }
 }

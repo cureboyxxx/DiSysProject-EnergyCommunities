@@ -12,11 +12,7 @@ public class HistoricalEnergyResponse {
     public HistoricalEnergyResponse() {
     }
 
-    public HistoricalEnergyResponse(LocalDateTime hour,
-                                    double communityProduced,
-                                    double communityUsed,
-                                    double gridUsed) {
-
+    public HistoricalEnergyResponse(LocalDateTime hour, double communityProduced, double communityUsed, double gridUsed) {
         this.hour = hour;
         this.communityProduced = communityProduced;
         this.communityUsed = communityUsed;
