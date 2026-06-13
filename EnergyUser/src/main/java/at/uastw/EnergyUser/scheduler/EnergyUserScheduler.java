@@ -5,47 +5,84 @@ import at.uastw.EnergyUser.service.messaging.UsedEnergyMessageProducer;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 public class EnergyUserScheduler {
     private final UsedEnergyMessageProducer messageProducer;
-    private final Random random = new Random();
+    private LocalDateTime lastMessageTime = LocalDateTime.now();
+    private LocalDateTime nextMessageTime = LocalDateTime.now();
 
     public EnergyUserScheduler(UsedEnergyMessageProducer messageProducer) {
         this.messageProducer = messageProducer;
     }
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedDelay = 1000)
     public void useEnergyAndSendUsedEnergyMessage() {
-        double usedEnergyInKwh = calculateUsedEnergyInKwh();
+        LocalDateTime now = LocalDateTime.now();
+
+        if (now.isBefore(nextMessageTime)) {
+            return;
+        }
+
+        double usedEnergyInKwh = calculateUsedEnergyInKwh(now);
 
         UsedEnergyMessageDto message = new UsedEnergyMessageDto(
                 "USER",
                 "COMMUNITY",
                 usedEnergyInKwh,
-                LocalDateTime.now()
+                now
         );
 
         messageProducer.publish(message);
+
+        lastMessageTime = now;
+        nextMessageTime = now.plusSeconds(calculateSecondsUntilNextMessage());
     }
 
-    private double calculateUsedEnergyInKwh() {
-        double schedulerIntervalInSeconds = 5.0;
-        int secondsPerDay = 24 * 60 * 60;
+    private double calculateUsedEnergyInKwh(LocalDateTime now) {
+        double secondsSinceLastMessage = calculateSecondsSinceLastMessage(now);
+        double usedPowerInKw = calculateUsedEnergy(now);
 
-        double minimumDailyKwhPerHome = 8.0;
-        double maximumDailyKwhPerHome = 35.0;
-        int numberOfHomes = 10;
+        return usedPowerInKw * secondsSinceLastMessage / 3600.0;
+    }
 
-        double randomDailyKwhPerHome = random.nextDouble(minimumDailyKwhPerHome, maximumDailyKwhPerHome);
+    private double calculateSecondsSinceLastMessage(LocalDateTime now) {
+        return Duration.between(lastMessageTime, now).toMillis() / 1000.0;
+    }
 
-        double dailyKwh = randomDailyKwhPerHome * numberOfHomes;
+    private int calculateSecondsUntilNextMessage() {
+        return ThreadLocalRandom.current().nextInt(1, 6);
+    }
 
-        double intervalKwh = dailyKwh * schedulerIntervalInSeconds / secondsPerDay;
+    private double calculateUsedEnergy(LocalDateTime now) {
+        double minimumEnergyInKw;
+        double maximumEnergyInKw;
+        int hour = now.getHour();
 
-        // rounding to 3 decimal places
-        return Math.round(intervalKwh * 1000.0) / 1000.0;
+        if (hour >= 0 && hour < 5) {
+            minimumEnergyInKw = 0.15;
+            maximumEnergyInKw = 0.35;
+
+        } else if (hour >= 5 && hour < 9) {
+            minimumEnergyInKw = 0.70;
+            maximumEnergyInKw = 2.20;
+
+        } else if (hour >= 9 && hour < 16) {
+            minimumEnergyInKw = 0.25;
+            maximumEnergyInKw = 0.80;
+
+        } else if (hour >= 16 && hour < 21) {
+            minimumEnergyInKw = 1.00;
+            maximumEnergyInKw = 3.00;
+
+        } else {
+            minimumEnergyInKw = 0.40;
+            maximumEnergyInKw = 1.00;
+        }
+
+        return ThreadLocalRandom.current().nextDouble(minimumEnergyInKw, maximumEnergyInKw);
     }
 }

@@ -24,17 +24,11 @@ public class UsedEnergyMessageProducer {
 
             rabbit.convertAndSend(
                     "used_energy",
-                    payload,
-                    this::setJsonContentType
+                    payload
             );
 
         } catch (Exception ex) {
             throw new IllegalStateException("Could not publish used_energy message", ex);
         }
-    }
-
-    private Message setJsonContentType(Message rabbitMessage) {
-        rabbitMessage.getMessageProperties().setContentType(MessageProperties.CONTENT_TYPE_JSON);
-        return rabbitMessage;
     }
 }
