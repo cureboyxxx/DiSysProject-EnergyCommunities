@@ -1,7 +1,7 @@
 package at.uastw.EnergyProducer.service.business;
 
-import at.uastw.EnergyProducer.model.WeatherCondition;
-import at.uastw.EnergyProducer.model.WeatherResponse;
+import at.uastw.EnergyProducer.dto.WeatherConditionDto;
+import at.uastw.EnergyProducer.dto.WeatherResponseDto;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -14,19 +14,26 @@ public class OpenMeteoWeatherService {
         this.restClient = restClientBuilder.build();
     }
 
-    public WeatherCondition getCurrentWeatherCondition() {
-        WeatherResponse response = restClient.get()
+    public WeatherConditionDto getCurrentWeatherCondition() {
+        WeatherResponseDto response = restClient
+                .get()
                 .uri(openMeteoApiURL)
                 .retrieve()
-                .body(WeatherResponse.class);
+                .body(WeatherResponseDto.class);
 
-        if (response == null || response.getCurrent() == null) {
-            throw new IllegalStateException("Open-Meteo response did not include current weather");
+        if (response == null) {
+            throw new IllegalStateException("OpenMeteo returned an empty response body");
         }
 
-        return new WeatherCondition(
-                response.getCurrent().getIsDay() == 1,
-                response.getCurrent().getCloudCover()
-        );
+        if (response.getCurrent() == null) {
+            throw new IllegalStateException("OpenMeteo response did not include the current weather data");
+        }
+
+        int isDayAsNumber = response.getCurrent().getIsDay();
+        boolean isDay = isDayAsNumber == 1;
+
+        int cloudCover = response.getCurrent().getCloudCover();
+
+        return new WeatherConditionDto(isDay, cloudCover);
     }
 }

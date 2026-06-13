@@ -6,12 +6,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Random;
 
 @Component
 public class EnergyUserScheduler {
-
     private final UsedEnergyMessageProducer messageProducer;
+    private final Random random = new Random();
 
     public EnergyUserScheduler(UsedEnergyMessageProducer messageProducer) {
         this.messageProducer = messageProducer;
@@ -19,7 +19,7 @@ public class EnergyUserScheduler {
 
     @Scheduled(fixedRate = 5000)
     public void useEnergyAndSendUsedEnergyMessage() {
-        double usedEnergyInKwh = generateUsedEnergyInKwh();
+        double usedEnergyInKwh = calculateUsedEnergyInKwh();
 
         UsedEnergyMessageDto message = new UsedEnergyMessageDto(
                 "USER",
@@ -31,7 +31,7 @@ public class EnergyUserScheduler {
         messageProducer.publish(message);
     }
 
-    private double generateUsedEnergyInKwh() {
+    private double calculateUsedEnergyInKwh() {
         double schedulerIntervalInSeconds = 5.0;
         int secondsPerDay = 24 * 60 * 60;
 
@@ -39,8 +39,7 @@ public class EnergyUserScheduler {
         double maximumDailyKwhPerHome = 35.0;
         int numberOfHomes = 10;
 
-        double randomDailyKwhPerHome = ThreadLocalRandom.current()
-                .nextDouble(minimumDailyKwhPerHome, maximumDailyKwhPerHome);
+        double randomDailyKwhPerHome = random.nextDouble(minimumDailyKwhPerHome, maximumDailyKwhPerHome);
 
         double dailyKwh = randomDailyKwhPerHome * numberOfHomes;
 

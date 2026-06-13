@@ -1,8 +1,8 @@
-package at.uastw.EnergyProducer.model;
+package at.uastw.EnergyProducer.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class WeatherResponse {
+public class WeatherResponseDto {
     private CurrentWeather current;
 
     public CurrentWeather getCurrent() { return current; }
@@ -32,5 +32,4 @@ public class WeatherResponse {
             this.cloudCover = cloudCover;
         }
     }
-
 }
