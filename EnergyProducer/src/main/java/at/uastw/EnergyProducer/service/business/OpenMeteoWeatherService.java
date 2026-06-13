@@ -15,18 +15,25 @@ public class OpenMeteoWeatherService {
     }
 
     public WeatherConditionDto getCurrentWeatherCondition() {
-        WeatherResponseDto response = restClient.get()
+        WeatherResponseDto response = restClient
+                .get()
                 .uri(openMeteoApiURL)
                 .retrieve()
                 .body(WeatherResponseDto.class);
 
-        if (response == null || response.getCurrent() == null) {
-            throw new IllegalStateException("Open-Meteo response did not include current weather");
+        if (response == null) {
+            throw new IllegalStateException("OpenMeteo returned an empty response body");
         }
 
-        return new WeatherConditionDto(
-                response.getCurrent().getIsDay() == 1,
-                response.getCurrent().getCloudCover()
-        );
+        if (response.getCurrent() == null) {
+            throw new IllegalStateException("OpenMeteo response did not include the current weather data");
+        }
+
+        int isDayAsNumber = response.getCurrent().getIsDay();
+        boolean isDay = isDayAsNumber == 1;
+
+        int cloudCover = response.getCurrent().getCloudCover();
+
+        return new WeatherConditionDto(isDay, cloudCover);
     }
 }
