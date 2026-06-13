@@ -17,13 +17,11 @@ public class EnergyProducerApplication {
 	}
 
 	@Bean
-	public Queue producedEnergyQueue() {
+	public Queue echoInProducedEnergyQueue() {
 		return new Queue("produced_energy", true);
 	}
-
 
 	public static void main(String[] args) {
 		SpringApplication.run(EnergyProducerApplication.class, args);
 	}
-
 }

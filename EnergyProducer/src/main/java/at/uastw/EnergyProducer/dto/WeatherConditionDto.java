@@ -1,12 +1,12 @@
-package at.uastw.EnergyProducer.model;
+package at.uastw.EnergyProducer.dto;
 
-public class WeatherCondition {
+public class WeatherConditionDto {
     private boolean isDay;
     private int cloudCover;
 
-    public WeatherCondition() {}
+    public WeatherConditionDto() {}
 
-    public WeatherCondition(boolean isDay, int cloudCover) {
+    public WeatherConditionDto(boolean isDay, int cloudCover) {
         this.isDay = isDay;
         this.cloudCover = cloudCover;
     }

@@ -1,6 +1,6 @@
 package at.uastw.EnergyProducer.service.business;
 
-import at.uastw.EnergyProducer.model.WeatherCondition;
+import at.uastw.EnergyProducer.dto.WeatherConditionDto;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
@@ -14,8 +14,8 @@ public class SolarEnergyGeneratorService {
         this.weatherService = weatherService;
     }
 
-    public double generateEnergyInKwh() {
-        WeatherCondition weatherCondition = weatherService.getCurrentWeatherCondition();
+    public double produceEnergyInKwh() {
+        WeatherConditionDto weatherCondition = weatherService.getCurrentWeatherCondition();
 
         if (!weatherCondition.isDay()) {
             return 0.0;

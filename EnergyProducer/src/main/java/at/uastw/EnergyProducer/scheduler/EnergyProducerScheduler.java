@@ -1,6 +1,6 @@
 package at.uastw.EnergyProducer.scheduler;
 
-import at.uastw.EnergyProducer.model.ProducedEnergyMessage;
+import at.uastw.EnergyProducer.dto.ProducedEnergyMessageDto;
 import at.uastw.EnergyProducer.service.messaging.ProducedEnergyMessageProducer;
 import at.uastw.EnergyProducer.service.business.SolarEnergyGeneratorService;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -11,23 +11,24 @@ import java.time.LocalDateTime;
 @Component
 public class EnergyProducerScheduler {
     private final SolarEnergyGeneratorService energyGenerator;
-    private final ProducedEnergyMessageProducer messagePublisher;
+    private final ProducedEnergyMessageProducer messageProducer;
 
-    public EnergyProducerScheduler(SolarEnergyGeneratorService energyGenerator, ProducedEnergyMessageProducer messagePublisher) {
+    public EnergyProducerScheduler(SolarEnergyGeneratorService energyGenerator, ProducedEnergyMessageProducer messageProducer) {
         this.energyGenerator = energyGenerator;
-        this.messagePublisher = messagePublisher;
+        this.messageProducer = messageProducer;
     }
 
     @Scheduled(fixedRate = 5000)
-    public void generateEnergyANDsendProducedEnergyMessage() {
-        double generatedEnergyInKwh = energyGenerator.generateEnergyInKwh();
+    public void produceEnergyAndSendProducedEnergyMessage() {
+        double producedEnergyInKwh = energyGenerator.produceEnergyInKwh();
 
-        ProducedEnergyMessage producedEnergyMessage = new ProducedEnergyMessage();
-        producedEnergyMessage.setType("PRODUCER");
-        producedEnergyMessage.setAssociation("COMMUNITY");
-        producedEnergyMessage.setAmountInKwh(generatedEnergyInKwh);
-        producedEnergyMessage.setDatetime(LocalDateTime.now());
+        ProducedEnergyMessageDto message = new ProducedEnergyMessageDto(
+                "PRODUCER",
+                "COMMUNITY",
+                producedEnergyInKwh,
+                LocalDateTime.now()
+        );
 
-        messagePublisher.publishMessage(producedEnergyMessage);
+        messageProducer.publish(message);
     }
 }

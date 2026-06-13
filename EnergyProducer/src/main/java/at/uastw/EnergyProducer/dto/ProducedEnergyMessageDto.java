@@ -1,16 +1,16 @@
-package at.uastw.EnergyProducer.model;
+package at.uastw.EnergyProducer.dto;
 
 import java.time.LocalDateTime;
 
-public class ProducedEnergyMessage {
+public class ProducedEnergyMessageDto {
     private String type;
     private String association;
     private double amountInKwh;
     private LocalDateTime datetime;
 
-    public ProducedEnergyMessage() {}
+    public ProducedEnergyMessageDto() {}
 
-    public ProducedEnergyMessage(String type, String association, double amountInKwh, LocalDateTime datetime) {
+    public ProducedEnergyMessageDto(String type, String association, double amountInKwh, LocalDateTime datetime) {
         this.type = type;
         this.association = association;
         this.amountInKwh = amountInKwh;
