@@ -1,8 +1,6 @@
 package at.uastw.EnergyUser.service.messaging;
 
 import at.uastw.EnergyUser.dto.UsedEnergyMessageDto;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;

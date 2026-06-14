@@ -12,6 +12,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @Component
 public class EnergyUserScheduler {
     private final UsedEnergyMessageProducer messageProducer;
+
     private LocalDateTime lastMessageTime = LocalDateTime.now();
     private LocalDateTime nextMessageTime = LocalDateTime.now();
 
@@ -40,13 +41,6 @@ public class EnergyUserScheduler {
 
         lastMessageTime = now;
         nextMessageTime = now.plusSeconds(calculateSecondsUntilNextMessage());
-    }
-
-    private double calculateUsedEnergyInKwh(LocalDateTime now) {
-        double secondsSinceLastMessage = calculateSecondsSinceLastMessage(now);
-        double usedPowerInKw = calculateUsedEnergy(now);
-
-        return usedPowerInKw * secondsSinceLastMessage / 3600.0;
     }
 
     private double calculateSecondsSinceLastMessage(LocalDateTime now) {
@@ -84,5 +78,12 @@ public class EnergyUserScheduler {
         }
 
         return ThreadLocalRandom.current().nextDouble(minimumEnergyInKw, maximumEnergyInKw);
+    }
+
+    private double calculateUsedEnergyInKwh(LocalDateTime now) {
+        double secondsSinceLastMessage = calculateSecondsSinceLastMessage(now);
+        double usedPowerInKw = calculateUsedEnergy(now);
+
+        return usedPowerInKw * secondsSinceLastMessage / 3600.0;
     }
 }
