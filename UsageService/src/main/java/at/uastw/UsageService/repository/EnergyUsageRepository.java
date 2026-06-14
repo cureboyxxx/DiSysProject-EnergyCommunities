@@ -1,19 +1,18 @@
 package at.uastw.UsageService.repository;
 
 import at.uastw.UsageService.entity.EnergyUsageEntity;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
 @Repository
 public interface EnergyUsageRepository extends JpaRepository<EnergyUsageEntity, LocalDateTime> {
     /*
-    @Modifying indicates to Spring Data JPA that this query modifies data in the database (UPDATE, INSERT, DELETE)
-    and is not a SELECT query.
+    @Transactional Ensures this upsert executes within a transactional context, so the write
+    operation and the returned entity are handled atomically and consistently.
 
     nativeQuery = true means: Spring executes the SQL exactly as it is written.
 
