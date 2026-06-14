@@ -9,12 +9,8 @@ import org.springframework.context.annotation.Bean;
 public class UsageServiceApplication {
 
 	@Bean
-	public Queue echoInProducedEnergyQueue(){
-		return new Queue("produced_energy", true);
-	}
-	@Bean
-	public Queue echoInUsedEnergyQueue(){
-		return new Queue("used_energy", true);
+	public Queue echoInEnergyQueue(){
+		return new Queue("energy_message", true);
 	}
 	@Bean
 	public Queue echoOutCurrentPercentageQueue() {

@@ -1,6 +1,7 @@
 package at.uastw.UsageService.repository;
 
 import at.uastw.UsageService.entity.EnergyUsageEntity;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,17 +20,18 @@ public interface EnergyUsageRepository extends JpaRepository<EnergyUsageEntity, 
     The ON CONFLICT (hour) clause determines which record is updated.
     EXCLUDED: contains the values from the failed INSERT
      */
-    @Modifying
+    @Transactional
     @Query(value = """
         INSERT INTO EnergyUsage (hour, community_produced, community_used, grid_used)
         VALUES (:hour, :amount, 0, 0)
         ON CONFLICT (hour)
         DO UPDATE SET
             community_produced = EnergyUsage.community_produced + :amount
+        RETURNING *;
         """, nativeQuery = true)
-    void upsertProduced(LocalDateTime hour, double amount);
+    EnergyUsageEntity upsertProduced(LocalDateTime hour, double amount);
 
-    @Modifying
+    @Transactional
     @Query(value = """
         INSERT INTO EnergyUsage (hour, community_produced, community_used, grid_used)
         VALUES (:hour, 0, 0, :amount)
@@ -42,8 +44,9 @@ public interface EnergyUsageRepository extends JpaRepository<EnergyUsageEntity, 
             grid_used = GREATEST(
                 EnergyUsage.grid_used,
                 (EnergyUsage.community_used + EnergyUsage.grid_used + :amount) - EnergyUsage.community_produced
-            );
+            )
+        RETURNING *;
         """, nativeQuery = true)
-    void upsertUsed(LocalDateTime hour, double amount);
+    EnergyUsageEntity upsertUsed(LocalDateTime hour, double amount);
 }
 

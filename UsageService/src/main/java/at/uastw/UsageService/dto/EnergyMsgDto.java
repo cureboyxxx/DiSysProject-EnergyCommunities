@@ -2,15 +2,15 @@ package at.uastw.UsageService.dto;
 
 import java.time.LocalDateTime;
 
-public class ProducedEnergyMsgDto {
+public class EnergyMsgDto {
     private String type;
     private String association;
     private double amountInKwh;
     private LocalDateTime datetime;
 
-    public ProducedEnergyMsgDto() {}
+    public EnergyMsgDto() {}
 
-    public ProducedEnergyMsgDto(String type, String association, double amountInKwh, LocalDateTime datetime) {
+    public EnergyMsgDto(String type, String association, double amountInKwh, LocalDateTime datetime) {
         this.type = type;
         this.association = association;
         this.amountInKwh = amountInKwh;
@@ -49,3 +49,4 @@ public class ProducedEnergyMsgDto {
         this.datetime = datetime;
     }
 }
+

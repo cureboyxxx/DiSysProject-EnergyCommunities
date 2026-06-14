@@ -1,40 +1,50 @@
 package at.uastw.UsageService.service.business;
 
-import at.uastw.UsageService.dto.ProducedEnergyMsgDto;
-import at.uastw.UsageService.dto.UsedEnergyMsgDto;
+import at.uastw.UsageService.dto.CurrentPercentageMsgDto;
+import at.uastw.UsageService.dto.EnergyMsgDto;
+import at.uastw.UsageService.entity.EnergyUsageEntity;
 import at.uastw.UsageService.repository.EnergyUsageRepository;
+import at.uastw.UsageService.service.messaging.producer.CurrentPercentageProducer;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
 @Service
 public class EnergyUsageService {
-
     private final EnergyUsageRepository repository;
+    private final CurrentPercentageProducer currentPercentageProducer;
 
-    public EnergyUsageService(EnergyUsageRepository repository) {
+    public EnergyUsageService(
+            EnergyUsageRepository repository,
+            CurrentPercentageProducer currentPercentageProducer
+    ) {
         this.repository = repository;
+        this.currentPercentageProducer = currentPercentageProducer;
     }
 
-    /*
-    @Transactional starts a database transaction around the method.
-    Everything within it is either executed in full or rolled back in full.
-     */
-    @Transactional
-    public void handleProducedEnergy(ProducedEnergyMsgDto msg) {
-        LocalDateTime hour = getHourlyDateTime(msg.getDatetime());
-        repository.upsertProduced(hour, msg.getAmountInKwh());
-    }
+    public void handleEnergy(EnergyMsgDto energyMsgDto) {
+        EnergyUsageEntity energyUsageEntity = null;
+        LocalDateTime hour = getHourlyDateTime(energyMsgDto.getDatetime());
 
-    /*
-    @Transactional starts a database transaction around the method.
-    Everything within it is either executed in full or rolled back in full.
-     */
-    @Transactional
-    public void handleUsedEnergy(UsedEnergyMsgDto msg) {
-        LocalDateTime hour = getHourlyDateTime(msg.getDatetime());
-        repository.upsertUsed(hour, msg.getAmountInKwh());
+        switch (energyMsgDto.getType()){
+            case "PRODUCER":
+                energyUsageEntity = repository.upsertProduced(hour, energyMsgDto.getAmountInKwh());
+                break;
+            case "USER":
+                energyUsageEntity = repository.upsertUsed(hour, energyMsgDto.getAmountInKwh());
+                break;
+            default:
+                System.out.println("Failed to process energy message: undefined type");
+                return;
+        }
+
+        CurrentPercentageMsgDto currentPercentageMsgDto = new CurrentPercentageMsgDto(
+                energyUsageEntity.getHour(),
+                energyUsageEntity.getCommunityProduced(),
+                energyUsageEntity.getCommunityUsed(),
+                energyUsageEntity.getGridUsed()
+        );
+        currentPercentageProducer.publish(currentPercentageMsgDto);
     }
 
     private LocalDateTime getHourlyDateTime(LocalDateTime dateTime){
