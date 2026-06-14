@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "EnergyUsage")
+@Table(name = "energyusage")
 public class EnergyUsageEntity {
     @Id
     @Column(name = "hour")
@@ -21,6 +21,13 @@ public class EnergyUsageEntity {
     private double gridUsed;
 
     public EnergyUsageEntity() {
+    }
+
+    public EnergyUsageEntity(LocalDateTime hour, double communityProduced, double communityUsed, double gridUsed) {
+        this.hour = hour;
+        this.communityProduced = communityProduced;
+        this.communityUsed = communityUsed;
+        this.gridUsed = gridUsed;
     }
 
     public LocalDateTime getHour() {
