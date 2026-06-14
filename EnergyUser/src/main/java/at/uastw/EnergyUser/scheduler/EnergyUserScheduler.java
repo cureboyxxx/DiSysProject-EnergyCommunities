@@ -13,11 +13,15 @@ import java.util.concurrent.ThreadLocalRandom;
 public class EnergyUserScheduler {
     private final UsedEnergyMessageProducer messageProducer;
 
-    private LocalDateTime lastMessageTime = LocalDateTime.now();
-    private LocalDateTime nextMessageTime = LocalDateTime.now();
+    private LocalDateTime lastMessageTime;
+    private LocalDateTime nextMessageTime;
 
     public EnergyUserScheduler(UsedEnergyMessageProducer messageProducer) {
         this.messageProducer = messageProducer;
+
+        LocalDateTime now = LocalDateTime.now();
+        this.lastMessageTime = now;
+        this.nextMessageTime = now.plusSeconds(calculateSecondsUntilNextMessage());
     }
 
     @Scheduled(fixedDelay = 1000)

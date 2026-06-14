@@ -15,12 +15,16 @@ public class EnergyProducerScheduler {
     private final SolarEnergyGeneratorService energyGenerator;
     private final ProducedEnergyMessageProducer messageProducer;
 
-    private LocalDateTime lastMessageTime = LocalDateTime.now();
-    private LocalDateTime nextMessageTime = LocalDateTime.now();
+    private LocalDateTime lastMessageTime;
+    private LocalDateTime nextMessageTime;
 
     public EnergyProducerScheduler(SolarEnergyGeneratorService energyGenerator, ProducedEnergyMessageProducer messageProducer) {
         this.energyGenerator = energyGenerator;
         this.messageProducer = messageProducer;
+
+        LocalDateTime now = LocalDateTime.now();
+        this.lastMessageTime = now;
+        this.nextMessageTime = now.plusSeconds(calculateSecondsUntilNextMessage());
     }
 
     @Scheduled(fixedDelay = 1000)
