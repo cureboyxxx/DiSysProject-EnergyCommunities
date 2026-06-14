@@ -1,14 +1,9 @@
 package at.uastw.UsageService.service.messaging.producer;
 
 import at.uastw.UsageService.dto.CurrentPercentageMsgDto;
-import at.uastw.UsageService.entity.EnergyUsageEntity;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
-
-import java.time.LocalDateTime;
 
 @Service
 public class CurrentPercentageProducer {
