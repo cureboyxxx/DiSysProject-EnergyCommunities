@@ -7,7 +7,6 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
@@ -15,12 +14,10 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
@@ -32,10 +29,11 @@ public class EnergyGuiController {
     Timeline heartbeatTimeline = new Timeline(
             new KeyFrame(Duration.seconds(5), event -> updateCircleHeartbeat())
     );
-    @FXML
-    private Button btn_refresh;
-    @FXML
-    private Button btn_showData;
+
+    private final HttpClient client = HttpClient.newHttpClient();
+
+    private final ObjectMapper mapper = new ObjectMapper()
+            .findAndRegisterModules();
 
     @FXML
     private Circle circle_connectionInfo;
@@ -104,22 +102,10 @@ public class EnergyGuiController {
         try {
             String url = "http://localhost:8083/energy/current";
 
-            HttpRequest getRequest = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .GET()
-                    .build();
+            String response = sendGetRequest(url);
 
-            HttpClient client = HttpClient.newBuilder().build();
-
-            HttpResponse<String> response = client.send(
-                    getRequest,
-                    HttpResponse.BodyHandlers.ofString()
-            );
-
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.findAndRegisterModules();
             CurrentEnergyResponse currentEnergyResponse = mapper.readValue(
-                    response.body(),
+                    response,
                     CurrentEnergyResponse.class
             );
 
@@ -163,9 +149,7 @@ public class EnergyGuiController {
                 lb_errorMessage.setVisible(true);
                 lb_errorMessage.setManaged(true);
 
-                lb_communityProducedValue.setText("no data");
-                lb_communityUsedValue.setText("no data");
-                lb_gridUsedValue.setText("no data");
+                setHistoricalValues("no data", "no data", "no data");
 
                 return;
             }
@@ -176,28 +160,15 @@ public class EnergyGuiController {
                             + "&end="
                             + endDateTime;
 
-            HttpRequest getRequest = HttpRequest.newBuilder()
-                    .uri(URI.create(urlString))
-                    .GET()
-                    .build();
+            String response = sendGetRequest(urlString);
 
-            HttpClient client = HttpClient.newBuilder().build();
 
-            HttpResponse<String> response = client.send(
-                    getRequest,
-                    HttpResponse.BodyHandlers.ofString()
-            );
-
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.findAndRegisterModules();
             List<HistoricalEnergyResponse> historicalEnergyResponse = Arrays.asList(
-                    mapper.readValue(response.body(), HistoricalEnergyResponse[].class)
+                    mapper.readValue(response, HistoricalEnergyResponse[].class)
             );
 
             if (historicalEnergyResponse.isEmpty()) {
-                lb_communityProducedValue.setText("no data");
-                lb_communityUsedValue.setText("no data");
-                lb_gridUsedValue.setText("no data");
+                setHistoricalValues("no data", "no data", "no data");
                 return;
             }
 
@@ -228,10 +199,30 @@ public class EnergyGuiController {
             lb_errorMessage.setVisible(true);
             lb_errorMessage.setManaged(true);
 
-            lb_communityProducedValue.setText("error");
-            lb_communityUsedValue.setText("error");
-            lb_gridUsedValue.setText("error");
+            setHistoricalValues("error", "error", "error");
             System.err.println("GET request failed: " + e);
         }
+    }
+
+    private String sendGetRequest(String url) throws Exception {
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .GET()
+                .build();
+
+        return client.send(
+                request,
+                HttpResponse.BodyHandlers.ofString()
+        ).body();
+    }
+
+    private void setHistoricalValues(String produced,
+                                     String used,
+                                     String grid) {
+
+        lb_communityProducedValue.setText(produced);
+        lb_communityUsedValue.setText(used);
+        lb_gridUsedValue.setText(grid);
     }
 }
