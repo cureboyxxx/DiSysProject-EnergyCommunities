@@ -1,6 +1,7 @@
 package at.uastw.UsageService.service.messaging.producer;
 
 import at.uastw.UsageService.dto.CurrentPercentageMsgDto;
+import at.uastw.UsageService.entity.EnergyUsageEntity;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -20,27 +21,14 @@ public class CurrentPercentageProducer {
         this.objectMapper = objectMapper;
     }
 
-    public void publish(LocalDateTime datetime) {
+    public void publish(CurrentPercentageMsgDto currentPercentageMsgDto) {
         try {
-            CurrentPercentageMsgDto dto = new CurrentPercentageMsgDto(
-                    datetime.withMinute(0).withSecond(0).withNano(0)
-            );
+            String payload = objectMapper.writeValueAsString(currentPercentageMsgDto);
 
-            String payload = objectMapper.writeValueAsString(dto);
-
-            rabbit.convertAndSend(
-                    "current_percentage",
-                    payload,
-                    this::setJsonContentType
-            );
+            rabbit.convertAndSend("current_percentage", payload);
 
         } catch (Exception ex) {
             throw new IllegalStateException("Could not publish current_percentage message", ex);
         }
-    }
-
-    private Message setJsonContentType(Message rabbitMessage) {
-        rabbitMessage.getMessageProperties().setContentType(MessageProperties.CONTENT_TYPE_JSON);
-        return rabbitMessage;
     }
 }
