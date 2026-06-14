@@ -18,7 +18,7 @@ public class EnergyProducerApplication {
 
 	@Bean
 	public Queue echoInProducedEnergyQueue() {
-		return new Queue("produced_energy", true);
+		return new Queue("energy_message", true);
 	}
 
 	public static void main(String[] args) {

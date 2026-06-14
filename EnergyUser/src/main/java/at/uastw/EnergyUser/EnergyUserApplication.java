@@ -12,7 +12,7 @@ public class EnergyUserApplication {
 
 	@Bean
 	public Queue echoInUsedEnergyQueue() {
-		return new Queue("used_energy", true);
+		return new Queue("energy_message", true);
 	}
 
 	public static void main(String[] args) {

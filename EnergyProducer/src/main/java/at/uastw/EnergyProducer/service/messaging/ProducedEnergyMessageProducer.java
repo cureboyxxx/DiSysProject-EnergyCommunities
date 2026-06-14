@@ -21,12 +21,12 @@ public class ProducedEnergyMessageProducer {
             String payload = objectMapper.writeValueAsString(message);
 
             rabbit.convertAndSend(
-                    "produced_energy",
+                    "energy_message",
                     payload
             );
 
         } catch (Exception ex) {
-            throw new IllegalStateException("Could not publish produced_energy message", ex);
+            throw new IllegalStateException("Could not publish message", ex);
         }
     }
 }
