@@ -8,7 +8,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "CurrentPercentage")
+@Table(name = "currentpercentage")
 public class CurrentPercentageEntity {
     @Id
     @Column(name = "hour")
