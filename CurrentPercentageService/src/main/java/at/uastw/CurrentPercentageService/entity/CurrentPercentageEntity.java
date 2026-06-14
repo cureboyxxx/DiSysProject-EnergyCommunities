@@ -23,6 +23,12 @@ public class CurrentPercentageEntity {
     public CurrentPercentageEntity() {
     }
 
+    public CurrentPercentageEntity(LocalDateTime hour, double communityDepleted, double gridPortion) {
+        this.hour = hour;
+        this.communityDepleted = communityDepleted;
+        this.gridPortion = gridPortion;
+    }
+
     public LocalDateTime getHour() {
         return hour;
     }
