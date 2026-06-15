@@ -1,0 +1,32 @@
+package at.uastw.EnergyUser.service.messaging;
+
+import at.uastw.EnergyUser.dto.UsedEnergyMessageDto;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.stereotype.Service;
+import tools.jackson.databind.ObjectMapper;
+
+@Service
+public class UsedEnergyMessageProducer {
+
+    private final RabbitTemplate rabbit;
+    private final ObjectMapper objectMapper;
+
+    public UsedEnergyMessageProducer(RabbitTemplate rabbit, ObjectMapper objectMapper) {
+        this.rabbit = rabbit;
+        this.objectMapper = objectMapper;
+    }
+
+    public void publish(UsedEnergyMessageDto message) {
+        try {
+            String payload = objectMapper.writeValueAsString(message);
+
+            rabbit.convertAndSend(
+                    "energy_message",
+                    payload
+            );
+
+        } catch (Exception ex) {
+            throw new IllegalStateException("Could not publish message", ex);
+        }
+    }
+}

@@ -1,34 +1,67 @@
 package at.uastw.EnergyProducer.scheduler;
 
-import at.uastw.EnergyProducer.model.ProducedEnergyMessage;
-import at.uastw.EnergyProducer.service.EnergyGenerator;
-import at.uastw.EnergyProducer.service.MessagePublisher;
+import at.uastw.EnergyProducer.dto.ProducedEnergyMessageDto;
+import at.uastw.EnergyProducer.service.messaging.ProducedEnergyMessageProducer;
+import at.uastw.EnergyProducer.service.business.SolarEnergyGeneratorService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 public class EnergyProducerScheduler {
-    private EnergyGenerator energyGenerator;
-    private MessagePublisher messagePublisher;
+    private final SolarEnergyGeneratorService energyGenerator;
+    private final ProducedEnergyMessageProducer messageProducer;
 
-    public EnergyProducerScheduler(EnergyGenerator energyGenerator, MessagePublisher messagePublisher) {
+    private LocalDateTime lastMessageTime;
+    private LocalDateTime nextMessageTime;
+
+    public EnergyProducerScheduler(SolarEnergyGeneratorService energyGenerator, ProducedEnergyMessageProducer messageProducer) {
         this.energyGenerator = energyGenerator;
-        this.messagePublisher = messagePublisher;
+        this.messageProducer = messageProducer;
+
+        LocalDateTime now = LocalDateTime.now();
+        this.lastMessageTime = now;
+        this.nextMessageTime = now.plusSeconds(calculateSecondsUntilNextMessage());
     }
 
-    @Scheduled(fixedRate = 5000)
-    public void generateEnergyANDsendProducedEnergyMessage() {
-        double generatedEnergyInKwh = energyGenerator.generateEnergyInKwh();
+    @Scheduled(fixedDelay = 1000)
+    public void produceEnergyAndSendProducedEnergyMessage() {
+        LocalDateTime now = LocalDateTime.now();
 
-        ProducedEnergyMessage producedEnergyMessage = new ProducedEnergyMessage();
-        producedEnergyMessage.setType("PRODUCER");
-        producedEnergyMessage.setAssociation("COMMUNITY");
-        producedEnergyMessage.setAmountInKwh(generatedEnergyInKwh);
-        producedEnergyMessage.setDatetime(LocalDateTime.now().toString());
+        if (now.isBefore(nextMessageTime)) {
+            return;
+        }
 
-        messagePublisher.publishMessage(producedEnergyMessage);
+        double producedEnergyInKwh = calculateProducedEnergyInKwh(now);
+
+        ProducedEnergyMessageDto message = new ProducedEnergyMessageDto(
+                "PRODUCER",
+                "COMMUNITY",
+                producedEnergyInKwh,
+                now
+        );
+
+        messageProducer.publish(message);
+
+        lastMessageTime = now;
+        nextMessageTime = now.plusSeconds(calculateSecondsUntilNextMessage());
+    }
+
+    private double calculateSecondsSinceLastMessage(LocalDateTime now) {
+        return Duration.between(lastMessageTime, now).toMillis() / 1000.0;
+    }
+
+    private int calculateSecondsUntilNextMessage() {
+        return ThreadLocalRandom.current().nextInt(1, 6);
+    }
+
+    private double calculateProducedEnergyInKwh(LocalDateTime now) {
+        double secondsSinceLastMessage = calculateSecondsSinceLastMessage(now);
+        double producedEnergyInKwhPerSecond = energyGenerator.produceEnergyInKwh();
+
+        return producedEnergyInKwhPerSecond * secondsSinceLastMessage;
     }
 }

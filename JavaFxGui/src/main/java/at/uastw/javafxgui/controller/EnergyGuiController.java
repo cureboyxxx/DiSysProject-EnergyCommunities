@@ -7,7 +7,6 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
@@ -15,12 +14,11 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
@@ -31,10 +29,11 @@ public class EnergyGuiController {
     Timeline heartbeatTimeline = new Timeline(
             new KeyFrame(Duration.seconds(5), event -> updateCircleHeartbeat())
     );
-    @FXML
-    private Button btn_refresh;
-    @FXML
-    private Button btn_showData;
+
+    private final HttpClient client = HttpClient.newHttpClient();
+
+    private final ObjectMapper mapper = new ObjectMapper()
+            .findAndRegisterModules();
 
     @FXML
     private Circle circle_connectionInfo;
@@ -71,18 +70,21 @@ public class EnergyGuiController {
                 .IntegerSpinnerValueFactory(0, 23, 0));
         spinner_TimeHourEnd.setEditable(true);
 
-        LocalDate nowDate = LocalDate.now();
-        datePicker_Start.setValue(nowDate);
-        datePicker_End.setValue(nowDate);
+        LocalDateTime now = LocalDateTime.now();
 
-        LocalTime nowTime = LocalTime.now();
-        spinner_TimeHourStart.getValueFactory().setValue(nowTime.getHour());
-        spinner_TimeHourEnd.getValueFactory().setValue(nowTime.getHour());
+        datePicker_Start.setValue(now.toLocalDate());
+        datePicker_End.setValue(now.toLocalDate());
+
+        spinner_TimeHourStart.getValueFactory().setValue(now.getHour());
+        spinner_TimeHourEnd.getValueFactory().setValue(now.getHour());
 
         updateCircleHeartbeat();
 
         heartbeatTimeline.setCycleCount(Animation.INDEFINITE);
         heartbeatTimeline.play();
+
+        onBtnRefreshClick();
+        onBtnShowDataClick();
     }
 
     private void updateCircleHeartbeat() {
@@ -100,21 +102,10 @@ public class EnergyGuiController {
         try {
             String url = "http://localhost:8083/energy/current";
 
-            HttpRequest getRequest = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .GET()
-                    .build();
+            String response = sendGetRequest(url);
 
-            HttpClient client = HttpClient.newBuilder().build();
-
-            HttpResponse<String> response = client.send(
-                    getRequest,
-                    HttpResponse.BodyHandlers.ofString()
-            );
-
-            ObjectMapper mapper = new ObjectMapper();
             CurrentEnergyResponse currentEnergyResponse = mapper.readValue(
-                    response.body(),
+                    response,
                     CurrentEnergyResponse.class
             );
 
@@ -142,72 +133,65 @@ public class EnergyGuiController {
             lb_errorMessage.setVisible(false);
             lb_errorMessage.setManaged(false);
 
-            LocalDate startDate = datePicker_Start.getValue();
-            LocalDate endDate = datePicker_End.getValue();
+            LocalDateTime startDateTime = LocalDateTime.of(
+                    datePicker_Start.getValue(),
+                    LocalTime.of(spinner_TimeHourStart.getValue(), 0)
+            );
 
-            LocalTime startTime = LocalTime.of(spinner_TimeHourStart.getValue(), 0);
+            LocalDateTime endDateTime = LocalDateTime.of(
+                    datePicker_End.getValue(),
+                    LocalTime.of(spinner_TimeHourEnd.getValue(), 0)
+            );
 
-            LocalTime endTime = LocalTime.of(spinner_TimeHourEnd.getValue(), 0);
-
-            if (!startDate.atTime(startTime).isBefore(endDate.atTime(endTime))) {
+            if (startDateTime.isAfter(endDateTime)) {
 
                 lb_errorMessage.setText("Start date/time not before end.");
                 lb_errorMessage.setVisible(true);
                 lb_errorMessage.setManaged(true);
 
-                lb_communityProducedValue.setText("no data");
-                lb_communityUsedValue.setText("no data");
-                lb_gridUsedValue.setText("no data");
+                setHistoricalValues("no data", "no data", "no data");
+
                 return;
             }
 
-            String start = buildTimestamp(
-                    startDate,
-                    spinner_TimeHourStart.getValue()
-            );
-
-            String end = buildTimestamp(
-                    endDate,
-                    spinner_TimeHourEnd.getValue()
-            );
 
             String urlString = "http://localhost:8083/energy/historical?start="
-                    + start + "&end=" + end;
+                            + startDateTime
+                            + "&end="
+                            + endDateTime;
 
-            HttpRequest getRequest = HttpRequest.newBuilder()
-                    .uri(URI.create(urlString))
-                    .GET()
-                    .build();
+            String response = sendGetRequest(urlString);
 
-            HttpClient client = HttpClient.newBuilder().build();
 
-            HttpResponse<String> response = client.send(
-                    getRequest,
-                    HttpResponse.BodyHandlers.ofString()
-            );
-
-            ObjectMapper mapper = new ObjectMapper();
             List<HistoricalEnergyResponse> historicalEnergyResponse = Arrays.asList(
-                    mapper.readValue(response.body(), HistoricalEnergyResponse[].class)
+                    mapper.readValue(response, HistoricalEnergyResponse[].class)
             );
 
             if (historicalEnergyResponse.isEmpty()) {
-                lb_communityProducedValue.setText("no data");
-                lb_communityUsedValue.setText("no data");
-                lb_gridUsedValue.setText("no data");
+                setHistoricalValues("no data", "no data", "no data");
                 return;
             }
 
-            HistoricalEnergyResponse last = historicalEnergyResponse.get(historicalEnergyResponse.size() - 1);
+            double totalProduced = 0;
+            double totalUsed = 0;
+            double totalGrid = 0;
+
+            for (HistoricalEnergyResponse usage : historicalEnergyResponse) {
+                totalProduced += usage.getCommunityProduced();
+                totalUsed += usage.getCommunityUsed();
+                totalGrid += usage.getGridUsed();
+            }
 
             lb_communityProducedValue.setText(
-                    String.format("%.3f kWh", last.getCommunityProduced())
+                    String.format("%.3f kWh", totalProduced)
             );
+
             lb_communityUsedValue.setText(
-                    String.format("%.3f kWh", last.getCommunityUsed())
+                    String.format("%.3f kWh", totalUsed)
             );
+
             lb_gridUsedValue.setText(
-                    String.format("%.3f kWh", last.getGridUsed())
+                    String.format("%.3f kWh", totalGrid)
             );
 
         } catch (Exception e) {
@@ -215,14 +199,30 @@ public class EnergyGuiController {
             lb_errorMessage.setVisible(true);
             lb_errorMessage.setManaged(true);
 
-            lb_communityProducedValue.setText("error");
-            lb_communityUsedValue.setText("error");
-            lb_gridUsedValue.setText("error");
+            setHistoricalValues("error", "error", "error");
             System.err.println("GET request failed: " + e);
         }
     }
 
-    private String buildTimestamp(LocalDate date, Integer hour) {
-        return String.format("%sT%02d:00:00", date, hour);
+    private String sendGetRequest(String url) throws Exception {
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .GET()
+                .build();
+
+        return client.send(
+                request,
+                HttpResponse.BodyHandlers.ofString()
+        ).body();
+    }
+
+    private void setHistoricalValues(String produced,
+                                     String used,
+                                     String grid) {
+
+        lb_communityProducedValue.setText(produced);
+        lb_communityUsedValue.setText(used);
+        lb_gridUsedValue.setText(grid);
     }
 }

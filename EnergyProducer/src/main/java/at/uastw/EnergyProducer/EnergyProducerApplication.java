@@ -1,5 +1,6 @@
 package at.uastw.EnergyProducer;
 
+import org.springframework.amqp.core.Queue;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -15,8 +16,12 @@ public class EnergyProducerApplication {
 		return RestClient.builder();
 	}
 
+	@Bean
+	public Queue echoInProducedEnergyQueue() {
+		return new Queue("energy_message", true);
+	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(EnergyProducerApplication.class, args);
 	}
-
 }
