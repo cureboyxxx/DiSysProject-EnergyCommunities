@@ -1,4 +1,4 @@
-INSERT INTO CurrentPercentage(hour, community_depleted, grid_portion)
+INSERT INTO currentpercentage(hour, community_depleted, grid_portion)
 VALUES
     ('2026-01-01T00:00', 0.00, 100.00),
     ('2026-01-01T01:00', 0.00, 100.00),

@@ -1,4 +1,4 @@
-INSERT INTO EnergyUsage(hour, community_produced, community_used, grid_used)
+INSERT INTO energyusage(hour, community_produced, community_used, grid_used)
 VALUES
     ('2026-01-01T00:00', 0.000, 0.000, 5.146),
     ('2026-01-01T01:00', 0.000, 0.000, 5.170),
