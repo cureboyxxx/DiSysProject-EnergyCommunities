@@ -33,33 +33,39 @@ communicate through message queues and REST APIs.
 
 ```mermaid
 flowchart TB
-    A[JavaFX GUI]
-    B[Spring Boot REST API<br/>Port 8083]
-    C[(PostgreSQL<br/>Port 5432)]
-    D[Current Percentage Service<br/>Port 8080]
-    E[Usage Service<br/>Port 8084]
-    F[(RabbitMQ<br/>Port 5672)]
-    G[Energy Producer<br/>Port 8081]
-    H[Energy User<br/>Port 8082]
-    I[Weather API<br/>Open-Meteo]
+A[JavaFX GUI]
+B[Spring Boot REST API\nPort 8083]
+C[(PostgreSQL\nPort 5432)]
+D[Current Percentage Service\nPort 8080]
+E[Usage Service\nPort 8084]
+F[(RabbitMQ\nPort 5672)]
+G[Energy Producer\nPort 8081]
+H[Energy User\nPort 8082]
+I[Weather API\nopen-meteo]
+J[Time of Day]
 
-    A -->|GET /energy/current| B
-    A -->|GET /energy/historical?start=...&end=...| B
+%% Frontend
+A --- |↓ GET /energy/current| B
+A --- |↓ GET /energy/historical?start=...&end=...| B
 
-    B -->|read tables| C
+%% API to DB
+B --- |↓ read tables| C
 
-    D -->|upsert currentpercentage table| C
-    E -->|upsert energyusage table| C
+%% DB to services
+C --- |↑ upsert currentpercentage table| D
+C --- |↑ upsert energyusage table| E
 
-    G -->|producer message<br/>queue: energy_message| F
-    H -->|user message<br/>queue: energy_message| F
+%% Services to / from RabbitMQ
+D ---|"↑ update message\n(queue: current_percentage)"| F
+E ---|"↑ producer/user message\n(queue: energy_message)"| F
+E ---|"↓ update message\n(queue: current_percentage)"| F
 
-    F -->|producer/user message<br/>queue: energy_message| E
+%% to Producer/User to RabbitMQ
+F --- |"↑ producer message\n(queue: energy_message)"| G
+F --- |"↑ user message\n(queue: energy_message)"| H
 
-    E -->|update message<br/>queue: current_percentage| F
-    F -->|update message<br/>queue: current_percentage| D
-
-    G -->|uses| I
+%% External data sources
+G --- |↓ use| I
 ```
 ------------------------------------------------------------------------
 
