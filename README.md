@@ -66,6 +66,7 @@ F --- |"↑ user message\n(queue: energy_message)"| H
 
 %% External data sources
 G --- |↓ use| I
+H -.- |↓ use| J
 ```
 ------------------------------------------------------------------------
 
