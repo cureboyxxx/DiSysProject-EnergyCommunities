@@ -31,26 +31,6 @@ communicate through message queues and REST APIs.
 
 ## System Architecture
 
-``` text
-EnergyProducer
-        |
-        | RabbitMQ (energy_message)
-        v
-   UsageService
-        |
-        | RabbitMQ (current_percentage)
-        v
-CurrentPercentageService
-        |
-        v
-    PostgreSQL
-        ^
-        |
-   JavaFxGuiAPI
-        ^
-        |
-     JavaFX GUI
-```
 
 ------------------------------------------------------------------------
 
