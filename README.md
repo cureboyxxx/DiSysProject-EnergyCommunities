@@ -31,42 +31,36 @@ communicate through message queues and REST APIs.
 
 ## System Architecture
 
+```mermaid
 flowchart TB
     A[JavaFX GUI]
-    B[Spring Boot REST API\n<small>Port 8083</small>]
-    C[(PostgreSQL\n<small>Port 5432</small>)]
-    D[Current Percentage Service\n<small>Port 8080</small>]
-    E[Usage Service\n<small>Port 8084</small>]
-    F[(RabbitMQ\n<small>Port 5672</small>)]
-    G[Energy Producer\n<small>Port 8081</small>]
-    H[Energy User\n<small>Port 8082</small>]
-    I[Weather API\n<small>open-meteo</small>]
-    J[Time of Day]
+    B[Spring Boot REST API<br/>Port 8083]
+    C[(PostgreSQL<br/>Port 5432)]
+    D[Current Percentage Service<br/>Port 8080]
+    E[Usage Service<br/>Port 8084]
+    F[(RabbitMQ<br/>Port 5672)]
+    G[Energy Producer<br/>Port 8081]
+    H[Energy User<br/>Port 8082]
+    I[Weather API<br/>Open-Meteo]
 
+    A -->|GET /energy/current| B
+    A -->|GET /energy/historical?start=...&end=...| B
 
-%% Frontend
-    A --- |↓ GET /energy/current| B
-    A --- |↓ GET /energy/historical?start=...&end=...| B
+    B -->|read tables| C
 
-%% API to DB
-    B --- |↓ read tables| C
+    D -->|upsert currentpercentage table| C
+    E -->|upsert energyusage table| C
 
-%% DB to services
-    C --- |↑ upsert currentpercentage table| D
-    C --- |↑ upsert energyusage table| E
+    G -->|producer message<br/>queue: energy_message| F
+    H -->|user message<br/>queue: energy_message| F
 
-%% Services to / from RabbitMQ
-    D ---|"↑ update message\n(queue: current_percentage)"| F
-    E ---|"↑ producer/user message\n(queue: energy_message)"| F
-    E ---|"↓ update message\n(queue: current_percentage)"| F
+    F -->|producer/user message<br/>queue: energy_message| E
 
-%% to Producer/User to RabbitMQ
-    F --- |"↑ producer message\n(queue: energy_message)"| G
-    F --- |"↑ user message\n(queue: energy_message)"| H
+    E -->|update message<br/>queue: current_percentage| F
+    F -->|update message<br/>queue: current_percentage| D
 
-%% External data sources
-    G --- |↓ use| I
-
+    G -->|uses| I
+```
 ------------------------------------------------------------------------
 
 ## Components
